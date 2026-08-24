@@ -18,10 +18,10 @@ env:
     module_text_server_fb_enabled=yes
 
 jobs:
-  build-android-arm64-debug:
+  build-android-debug:
     runs-on: ubuntu-24.04
-    name: Android arm64 debug APK
-    timeout-minutes: 60
+    name: Android debug APK (arm64 + arm32)
+    timeout-minutes: 120
 
     steps:
       - name: Checkout
@@ -50,33 +50,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .scons_cache
-          key: android-arm64-debug-${{ runner.os }}-${{ github.sha }}
+          key: android-debug-${{ runner.os }}-${{ github.sha }}
           restore-keys: |
-            android-arm64-debug-${{ runner.os }}-
+            android-debug-${{ runner.os }}-
 
-      - name: Download Swappy
-        id: swappy_sdk
-        shell: bash
-        run: |
-          if python ./misc/scripts/install_swappy_android.py; then
-            echo "SWAPPY_ENABLED=yes" >> "$GITHUB_OUTPUT"
-          else
-            echo "::warning::Swappy installation failed, building without Swappy support."
-            echo "SWAPPY_ENABLED=no" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Download Perfetto
-        id: perfetto_sdk
-        shell: bash
-        run: |
-          if python ./misc/scripts/install_perfetto.py; then
-            echo "PROFILER_ENABLED=perfetto" >> "$GITHUB_OUTPUT"
-          else
-            echo "::warning::Perfetto installation failed, building without Perfetto support."
-            echo "PROFILER_ENABLED=none" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Compile Android arm64 debug template
+      - name: Compile Android arm64 debug template (ARMv8)
         shell: bash
         run: |
           scons \
@@ -84,8 +62,17 @@ jobs:
             target=template_debug \
             arch=arm64 \
             ${{ env.SCONS_FLAGS }} \
-            profiler=${{ steps.perfetto_sdk.outputs.PROFILER_ENABLED }} \
-            swappy=${{ steps.swappy_sdk.outputs.SWAPPY_ENABLED }} \
+            cache_path=${{ github.workspace }}/.scons_cache \
+            redirect_build_objects=no
+
+      - name: Compile Android arm32 debug template (ARMv7)
+        shell: bash
+        run: |
+          scons \
+            platform=android \
+            target=template_debug \
+            arch=arm32 \
+            ${{ env.SCONS_FLAGS }} \
             cache_path=${{ github.workspace }}/.scons_cache \
             redirect_build_objects=no
 
@@ -100,13 +87,13 @@ jobs:
         shell: bash
         run: |
           mkdir -p artifact
-          cp bin/android_debug.apk artifact/android_debug_arm64.apk
-          ls -lh artifact/android_debug_arm64.apk
+          cp bin/android_debug.apk artifact/android_debug_arm64_arm32.apk
+          ls -lh artifact/android_debug_arm64_arm32.apk
 
       - name: Upload APK zip
         uses: actions/upload-artifact@v4
         with:
-          name: android-arm64-debug-apk
-          path: artifact/android_debug_arm64.apk
+          name: android-arm64-arm32-debug-apk
+          path: artifact/android_debug_arm64_arm32.apk
           if-no-files-found: error
           retention-days: 60
