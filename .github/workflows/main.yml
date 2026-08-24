@@ -1,4 +1,4 @@
-name: Android Builds
+name: Android Debug APK
 
 "on":
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: android-builds-${{ github.ref }}
+  group: android-debug-apk-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -18,40 +18,10 @@ env:
     module_text_server_fb_enabled=yes
 
 jobs:
-  build-android:
+  build-android-arm64-debug:
     runs-on: ubuntu-24.04
-    name: ${{ matrix.name }}
+    name: Android arm64 debug APK
     timeout-minutes: 60
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: Editor arm64
-            cache-name: android-editor-arm64
-            target: editor
-            scons-flags: >-
-              arch=arm64
-              production=yes
-            gradle-task: generateGodotEditor
-            artifact-path: |
-              bin/android_editor_builds/**
-
-          - name: Template arm32
-            cache-name: android-template-arm32
-            target: template_debug
-            scons-flags: arch=arm32
-            gradle-task: generateGodotTemplates
-            artifact-path: |
-              bin/**
-
-          - name: Template arm64
-            cache-name: android-template-arm64
-            target: template_debug
-            scons-flags: arch=arm64
-            gradle-task: generateGodotTemplates
-            artifact-path: |
-              bin/**
 
     steps:
       - name: Checkout
@@ -80,9 +50,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .scons_cache
-          key: ${{ matrix.cache-name }}-${{ runner.os }}-${{ github.sha }}
+          key: android-arm64-debug-${{ runner.os }}-${{ github.sha }}
           restore-keys: |
-            ${{ matrix.cache-name }}-${{ runner.os }}-
+            android-arm64-debug-${{ runner.os }}-
 
       - name: Download Swappy
         id: swappy_sdk
@@ -106,31 +76,37 @@ jobs:
             echo "PROFILER_ENABLED=none" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Compile Android binaries
+      - name: Compile Android arm64 debug template
         shell: bash
         run: |
           scons \
             platform=android \
-            target=${{ matrix.target }} \
+            target=template_debug \
+            arch=arm64 \
             ${{ env.SCONS_FLAGS }} \
-            ${{ matrix.scons-flags }} \
             profiler=${{ steps.perfetto_sdk.outputs.PROFILER_ENABLED }} \
             swappy=${{ steps.swappy_sdk.outputs.SWAPPY_ENABLED }} \
             cache_path=${{ github.workspace }}/.scons_cache \
             redirect_build_objects=no
 
-      - name: Generate Android package
+      - name: Generate debug APK
         shell: bash
         run: |
           cd platform/android/java
-          ./gradlew ${{ matrix.gradle-task }}
+          ./gradlew generateGodotTemplates
           cd ../../..
-          find bin -maxdepth 3 -type f -print
 
-      - name: Upload artifact
+      - name: Prepare APK artifact
+        shell: bash
+        run: |
+          mkdir -p artifact
+          cp bin/android_debug.apk artifact/android_debug_arm64.apk
+          ls -lh artifact/android_debug_arm64.apk
+
+      - name: Upload APK zip
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.cache-name }}
-          path: ${{ matrix.artifact-path }}
+          name: android-arm64-debug-apk
+          path: artifact/android_debug_arm64.apk
           if-no-files-found: error
           retention-days: 60
