@@ -6,8 +6,8 @@ Import("env")
 if env["vulkan"]:
     env.add_source_files(env.editor_sources, "shader_baker_export_plugin_platform_vulkan.cpp")
 
-if env["d3d12"]:
+if env.get("d3d12", False):
     env.add_source_files(env.editor_sources, "shader_baker_export_plugin_platform_d3d12.cpp")
 
-if env["metal"]:
+if env.get("metal", False):
     env.add_source_files(env.editor_sources, "shader_baker_export_plugin_platform_metal.cpp")

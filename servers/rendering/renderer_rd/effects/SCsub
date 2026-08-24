@@ -8,7 +8,7 @@ Import("env")
 env_effects = env.Clone()
 
 # metal-cpp headers for Metal FX
-if env["metal"]:
+if env.get("metal", False):
     env_effects.Prepend(CPPPATH=["#thirdparty/metal-cpp"])
 
 # Thirdparty source files
