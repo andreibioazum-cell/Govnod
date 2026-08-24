@@ -54,20 +54,11 @@ const char *EditorBuildProfile::build_option_identifiers[BUILD_OPTION_MAX] = {
 	"disable_3d",
 	"disable_navigation_2d",
 	"disable_navigation_3d",
-	"accesskit",
-	"sdl",
 	"disable_xr",
 	"module_openxr_enabled",
-	"wayland",
-	"x11",
-	"pulseaudio",
-	"alsa",
 	"rendering_device", // FIXME: There's no scons option to disable rendering device.
 	"forward_mobile_renderer",
 	"vulkan",
-	"d3d12",
-	"metal",
-	"opengl3",
 	"disable_physics_2d",
 	"module_godot_physics_2d_enabled",
 	"disable_physics_3d",
@@ -86,21 +77,11 @@ const bool EditorBuildProfile::build_option_disabled_by_default[BUILD_OPTION_MAX
 	false, // 3D
 	false, // NAVIGATION_2D
 	false, // NAVIGATION_3D
-	false, // ACCESSKIT
-	false, // SDL
 	false, // XR
 	false, // OPENXR
-	false, // WAYLAND
-	false, // X11
-	false, // PULSEAUDIO
-	false, // ALSA
 	false, // RENDERING_DEVICE
-	false, // FORWARD_RENDERER
 	false, // MOBILE_RENDERER
 	false, // VULKAN
-	false, // D3D12
-	false, // METAL
-	false, // OPENGL
 	false, // PHYSICS_2D
 	false, // PHYSICS_GODOT_2D
 	false, // PHYSICS_3D
@@ -119,21 +100,11 @@ const bool EditorBuildProfile::build_option_disable_values[BUILD_OPTION_MAX] = {
 	true, // 3D
 	true, // NAVIGATION_2D
 	true, // NAVIGATION_3D
-	false, // ACCESSKIT
-	false, // SDL
 	true, // XR
 	false, // OPENXR
-	false, // WAYLAND
-	false, // X11
-	false, // PULSEAUDIO
-	false, // ALSA
 	false, // RENDERING_DEVICE
-	false, // FORWARD_RENDERER
 	false, // MOBILE_RENDERER
 	false, // VULKAN
-	false, // D3D12
-	false, // METAL
-	false, // OPENGL
 	true, // PHYSICS_2D
 	false, // PHYSICS_GODOT_2D
 	true, // PHYSICS_3D
@@ -152,21 +123,11 @@ const bool EditorBuildProfile::build_option_explicit_use[BUILD_OPTION_MAX] = {
 	false, // 3D
 	false, // NAVIGATION_2D
 	false, // NAVIGATION_3D
-	false, // ACCESSKIT
-	false, // SDL
 	false, // XR
 	false, // OPENXR
-	false, // WAYLAND
-	false, // X11
-	false, // PULSEAUDIO
-	false, // ALSA
 	false, // RENDERING_DEVICE
-	false, // FORWARD_RENDERER
 	false, // MOBILE_RENDERER
 	false, // VULKAN
-	false, // D3D12
-	false, // METAL
-	false, // OPENGL
 	false, // PHYSICS_2D
 	false, // PHYSICS_GODOT_2D
 	false, // PHYSICS_3D
@@ -184,21 +145,11 @@ const EditorBuildProfile::BuildOptionCategory EditorBuildProfile::build_option_c
 	BUILD_OPTION_CATEGORY_GENERAL, // 3D
 	BUILD_OPTION_CATEGORY_GENERAL, // NAVIGATION_2D
 	BUILD_OPTION_CATEGORY_GENERAL, // NAVIGATION_3D
-	BUILD_OPTION_CATEGORY_GENERAL, // ACCESSKIT
-	BUILD_OPTION_CATEGORY_GENERAL, // SDL
 	BUILD_OPTION_CATEGORY_GENERAL, // XR
 	BUILD_OPTION_CATEGORY_GENERAL, // OPENXR
-	BUILD_OPTION_CATEGORY_GENERAL, // WAYLAND
-	BUILD_OPTION_CATEGORY_GENERAL, // X11
-	BUILD_OPTION_CATEGORY_GENERAL, // PULSEAUDIO
-	BUILD_OPTION_CATEGORY_GENERAL, // ALSA
 	BUILD_OPTION_CATEGORY_GRAPHICS, // RENDERING_DEVICE
-	BUILD_OPTION_CATEGORY_GRAPHICS, // FORWARD_RENDERER
 	BUILD_OPTION_CATEGORY_GRAPHICS, // MOBILE_RENDERER
 	BUILD_OPTION_CATEGORY_GRAPHICS, // VULKAN
-	BUILD_OPTION_CATEGORY_GRAPHICS, // D3D12
-	BUILD_OPTION_CATEGORY_GRAPHICS, // METAL
-	BUILD_OPTION_CATEGORY_GRAPHICS, // OPENGL
 	BUILD_OPTION_CATEGORY_PHYSICS, // PHYSICS_2D
 	BUILD_OPTION_CATEGORY_PHYSICS, // PHYSICS_GODOT_2D
 	BUILD_OPTION_CATEGORY_PHYSICS, // PHYSICS_3D
@@ -221,22 +172,10 @@ const HashMap<EditorBuildProfile::BuildOption, LocalVector<EditorBuildProfile::B
 	{ BUILD_OPTION_OPENXR, {
 			BUILD_OPTION_XR,
 	} },
-	{ BUILD_OPTION_FORWARD_RENDERER, {
-			BUILD_OPTION_RENDERING_DEVICE,
-	} },
 	{ BUILD_OPTION_MOBILE_RENDERER, {
 			BUILD_OPTION_RENDERING_DEVICE,
 	} },
 	{ BUILD_OPTION_VULKAN, {
-			BUILD_OPTION_FORWARD_RENDERER,
-			BUILD_OPTION_MOBILE_RENDERER,
-	} },
-	{ BUILD_OPTION_D3D12, {
-			BUILD_OPTION_FORWARD_RENDERER,
-			BUILD_OPTION_MOBILE_RENDERER,
-	} },
-	{ BUILD_OPTION_METAL, {
-			BUILD_OPTION_FORWARD_RENDERER,
 			BUILD_OPTION_MOBILE_RENDERER,
 	} },
 	{ BUILD_OPTION_PHYSICS_GODOT_2D, {
@@ -624,15 +563,9 @@ void EditorBuildProfile::_bind_methods() {
 	BIND_ENUM_CONSTANT(BUILD_OPTION_NAVIGATION_3D);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_XR);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_OPENXR);
-	BIND_ENUM_CONSTANT(BUILD_OPTION_WAYLAND);
-	BIND_ENUM_CONSTANT(BUILD_OPTION_X11);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_RENDERING_DEVICE);
-	BIND_ENUM_CONSTANT(BUILD_OPTION_FORWARD_RENDERER);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_MOBILE_RENDERER);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_VULKAN);
-	BIND_ENUM_CONSTANT(BUILD_OPTION_D3D12);
-	BIND_ENUM_CONSTANT(BUILD_OPTION_METAL);
-	BIND_ENUM_CONSTANT(BUILD_OPTION_OPENGL);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_PHYSICS_2D);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_PHYSICS_GODOT_2D);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_PHYSICS_3D);
@@ -666,10 +599,6 @@ EditorBuildProfile::EditorBuildProfile() {
 	};
 	build_option_settings.insert(BUILD_OPTION_WAYLAND, settings_wayland);
 
-	HashMap<String, LocalVector<Variant>> settings_x11 = {
-		{ "display/display_server/driver.linuxbsd", { "default", "x11" } },
-	};
-	build_option_settings.insert(BUILD_OPTION_X11, settings_x11);
 
 	HashMap<String, LocalVector<Variant>> settings_rd = {
 		{ "rendering/renderer/rendering_method", { "mobile" } },

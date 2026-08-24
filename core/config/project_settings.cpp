@@ -104,14 +104,7 @@ const PackedStringArray ProjectSettings::_get_supported_features() {
 	features.append(GODOT_VERSION_FULL_CONFIG);
 	features.append(GODOT_VERSION_FULL_BUILD);
 
-#ifdef RD_ENABLED
-	features.append("Forward Plus");
 	features.append("Mobile");
-#endif
-
-#ifdef GLES3_ENABLED
-	features.append("GL Compatibility");
-#endif
 	return features;
 }
 

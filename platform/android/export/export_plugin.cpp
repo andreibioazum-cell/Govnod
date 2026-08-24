@@ -898,7 +898,7 @@ bool EditorExportPlatformAndroid::_has_manage_external_storage_permission(const 
 bool EditorExportPlatformAndroid::_uses_vulkan(const Ref<EditorExportPreset> &p_preset) const {
 	String rendering_method = get_project_setting(p_preset, "rendering/renderer/rendering_method.mobile");
 	String rendering_driver = get_project_setting(p_preset, "rendering/rendering_device/driver.android");
-	return (rendering_method == "forward_plus" || rendering_method == "mobile") && rendering_driver == "vulkan";
+	return rendering_method == "mobile" && rendering_driver == "vulkan";
 }
 
 void EditorExportPlatformAndroid::_notification(int p_what) {
@@ -2170,7 +2170,7 @@ String EditorExportPlatformAndroid::get_export_option_warning(const EditorExport
 			}
 		} else if (p_name == "shader_baker/enabled" && bool(p_preset->get("shader_baker/enabled"))) {
 			String export_renderer = GLOBAL_GET("rendering/renderer/rendering_method.mobile");
-			if (OS::get_singleton()->get_current_rendering_method() == "gl_compatibility") {
+			if (false) {
 				return TTR("\"Shader Baker\" is not supported when using the Compatibility renderer.");
 			} else if (OS::get_singleton()->get_current_rendering_method() != export_renderer) {
 				return vformat(TTR("The editor is currently using a different renderer than what the target platform will use. \"Shader Baker\" won't be able to include core shaders. Switch to the \"%s\" renderer temporarily to fix this."), export_renderer);
@@ -3175,7 +3175,7 @@ bool EditorExportPlatformAndroid::has_valid_project_configuration(const Ref<Edit
 	}
 
 	String current_renderer = get_project_setting(p_preset, "rendering/renderer/rendering_method.mobile");
-	if (current_renderer == "forward_plus") {
+	if (false) {
 		// Warning only, so don't override `valid`.
 		err += vformat(TTR("The \"%s\" renderer is designed for Desktop devices, and is not suitable for Android devices."), current_renderer);
 		err += "\n";

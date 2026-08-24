@@ -6178,29 +6178,11 @@ String EditorNode::_get_system_info() const {
 	}
 
 	// Prettify
-	if (rendering_method == "forward_plus") {
-		rendering_method = "Forward+";
-	} else if (rendering_method == "mobile") {
+	if (rendering_method == "mobile") {
 		rendering_method = "Mobile";
-	} else if (rendering_method == "gl_compatibility") {
-		rendering_method = "Compatibility";
 	}
 	if (driver_name == "vulkan") {
 		driver_name = "Vulkan";
-	} else if (driver_name == "d3d12") {
-		driver_name = "Direct3D 12";
-	} else if (driver_name == "opengl3_angle") {
-		driver_name = "OpenGL ES 3/ANGLE";
-	} else if (driver_name == "opengl3_es") {
-		driver_name = "OpenGL ES 3";
-	} else if (driver_name == "opengl3") {
-		if (OS::get_singleton()->get_gles_over_gl()) {
-			driver_name = "OpenGL 3";
-		} else {
-			driver_name = "OpenGL ES 3";
-		}
-	} else if (driver_name == "metal") {
-		driver_name = "Metal";
 	}
 
 	// Join info.
@@ -7889,26 +7871,18 @@ void EditorNode::_renderer_selected(int p_index) {
 		video_restart_dialog->disconnect(SceneStringName(confirmed), callable_mp(this, &EditorNode::_set_renderer_name_save_and_restart));
 	}
 
-	const String mobile_rendering_method = rendering_method == "forward_plus" ? "mobile" : rendering_method;
-	const String web_rendering_method = "gl_compatibility";
 	video_restart_dialog->connect(SceneStringName(confirmed), callable_mp(this, &EditorNode::_set_renderer_name_save_and_restart).bind(rendering_method));
 	video_restart_dialog->set_text(
-			vformat(TTR("Changing the renderer requires restarting the editor.\n\nChoosing Save & Restart will change the renderer to:\n- Desktop platforms: %s\n- Mobile platforms: %s\n- Web platform: %s"),
-					_to_rendering_method_display_name(rendering_method), _to_rendering_method_display_name(mobile_rendering_method), _to_rendering_method_display_name(web_rendering_method)));
+			vformat(TTR("Changing the renderer requires restarting the editor.\n\nChoosing Save & Restart will change the renderer to:\n- All platforms: %s"),
+					_to_rendering_method_display_name(rendering_method)));
 	video_restart_dialog->popup_centered();
 
 	_update_renderer_color();
 }
 
 String EditorNode::_to_rendering_method_display_name(const String &p_rendering_method) const {
-	if (p_rendering_method == "forward_plus") {
-		return TTR("Forward+");
-	}
 	if (p_rendering_method == "mobile") {
 		return TTR("Mobile");
-	}
-	if (p_rendering_method == "gl_compatibility") {
-		return TTR("Compatibility");
 	}
 	return p_rendering_method;
 }
@@ -7916,13 +7890,7 @@ String EditorNode::_to_rendering_method_display_name(const String &p_rendering_m
 void EditorNode::_set_renderer_name_save_and_restart(const String &p_rendering_method) {
 	ProjectSettings::get_singleton()->set("rendering/renderer/rendering_method", p_rendering_method);
 
-	if (p_rendering_method == "mobile" || p_rendering_method == "gl_compatibility") {
-		// Also change the mobile override if changing to a compatible renderer.
-		// This prevents visual discrepancies between desktop and mobile platforms.
-		ProjectSettings::get_singleton()->set("rendering/renderer/rendering_method.mobile", p_rendering_method);
-	} else if (p_rendering_method == "forward_plus") {
-		// Use the equivalent mobile renderer. This prevents the renderer from staying
-		// on its old choice if moving from `gl_compatibility` to `forward_plus`.
+	{
 		ProjectSettings::get_singleton()->set("rendering/renderer/rendering_method.mobile", "mobile");
 	}
 

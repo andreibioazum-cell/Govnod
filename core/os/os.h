@@ -106,7 +106,6 @@ private:
 	RenderingSource _current_rendering_driver_name_source = RENDERING_SOURCE_DEFAULT;
 	String _current_rendering_method;
 	RenderingSource _current_rendering_method_source = RENDERING_SOURCE_DEFAULT;
-	bool _is_gles_over_gl = false;
 
 	RemoteFilesystemClient default_rfs;
 
@@ -155,13 +154,11 @@ public:
 		_current_rendering_method = p_name;
 		_current_rendering_method_source = p_source;
 	}
-	void set_gles_over_gl(bool p_enabled) { _is_gles_over_gl = p_enabled; }
 
 	String get_current_rendering_driver_name() const { return _current_rendering_driver_name; }
 	String get_current_rendering_method() const { return _current_rendering_method; }
 	RenderingSource get_current_rendering_driver_name_source() const { return _current_rendering_driver_name_source; }
 	RenderingSource get_current_rendering_method_source() const { return _current_rendering_method_source; }
-	bool get_gles_over_gl() const { return _is_gles_over_gl; }
 
 	virtual Vector<String> get_video_adapter_driver_info() const = 0;
 	virtual bool get_user_prefers_integrated_gpu() const { return false; }

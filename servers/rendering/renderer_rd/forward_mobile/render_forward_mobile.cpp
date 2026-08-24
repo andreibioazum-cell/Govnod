@@ -3121,15 +3121,6 @@ void RenderForwardMobile::_geometry_instance_update(RenderGeometryInstance *p_ge
 			}
 
 		} break;
-#if 0
-		case RSE::INSTANCE_IMMEDIATE: {
-			RasterizerStorageGLES3::Immediate *immediate = storage->immediate_owner.get_or_null(inst->base);
-			ERR_CONTINUE(!immediate);
-
-			_add_geometry(immediate, inst, nullptr, -1, p_depth_pass, p_shadow_pass);
-
-		} break;
-#endif
 		case RSE::INSTANCE_PARTICLES: {
 			int draw_passes = particles_storage->particles_get_draw_passes(ginstance->data->base);
 

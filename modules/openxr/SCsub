@@ -18,27 +18,6 @@ thirdparty_obj = []
 if env["platform"] == "android":
     env_openxr.AppendUnique(CPPDEFINES=["XR_OS_ANDROID", "XR_USE_PLATFORM_ANDROID"])
     env_openxr.AppendUnique(CPPDEFINES=[("JSON_USE_EXCEPTION", 0)])
-elif env["platform"] == "linuxbsd":
-    env_openxr.AppendUnique(CPPDEFINES=["XR_OS_LINUX"])
-
-    if env["x11"]:
-        env_openxr.AppendUnique(CPPDEFINES=["XR_USE_PLATFORM_XLIB"])
-
-    if env["wayland"] and env["opengl3"]:
-        env_openxr.AppendUnique(CPPDEFINES=["XR_USE_PLATFORM_EGL", "XRDEPENDENCIES_USE_GLAD"])
-        env_openxr.Prepend(CPPPATH=["#thirdparty/glad"])
-
-    # FreeBSD uses non-standard getenv functions.
-    if not sys.platform.startswith("freebsd"):
-        env_openxr.AppendUnique(CPPDEFINES=["HAVE_SECURE_GETENV"])
-elif env["platform"] == "windows":
-    env_openxr.AppendUnique(CPPDEFINES=["XR_OS_WINDOWS", "NOMINMAX", "XR_USE_PLATFORM_WIN32"])
-elif env["platform"] == "macos":
-    env_openxr.AppendUnique(CPPDEFINES=["XR_OS_APPLE"])
-
-    # There does not seem to be a XR_USE_PLATFORM_XYZ for Apple.
-
-
 if env["builtin_openxr"]:
     thirdparty_dir = "#thirdparty/openxr"
 

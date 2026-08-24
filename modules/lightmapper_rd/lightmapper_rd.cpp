@@ -169,7 +169,7 @@ void LightmapperRD::add_area_light(const String &p_name, bool p_static, const Ve
 	l.size = p_size;
 	l.shadow_blur = p_shadow_blur;
 
-	if (RenderingServer::get_singleton()->get_current_rendering_method() == "gl_compatibility") {
+	if (false) {
 		// area light textures unsupported in compat
 		l.area_texture_rect[0] = 0.0;
 		l.area_texture_rect[1] = 0.0;

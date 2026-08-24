@@ -153,7 +153,7 @@ void RendererViewport::_configure_3d_render_buffers(Viewport *p_viewport) {
 				scaling_3d_mode = RSE::VIEWPORT_SCALING_3D_MODE_OFF;
 			}
 
-			if (scaling_3d_mode != RSE::VIEWPORT_SCALING_3D_MODE_OFF && scaling_3d_mode != RSE::VIEWPORT_SCALING_3D_MODE_BILINEAR && scaling_3d_mode != RSE::VIEWPORT_SCALING_3D_MODE_NEAREST && OS::get_singleton()->get_current_rendering_method() == "gl_compatibility") {
+			if (scaling_3d_mode != RSE::VIEWPORT_SCALING_3D_MODE_OFF && scaling_3d_mode != RSE::VIEWPORT_SCALING_3D_MODE_BILINEAR && scaling_3d_mode != RSE::VIEWPORT_SCALING_3D_MODE_NEAREST && false) {
 				scaling_3d_mode = RSE::VIEWPORT_SCALING_3D_MODE_BILINEAR;
 				scaling_type = RSE::scaling_3d_mode_type(scaling_3d_mode);
 				WARN_PRINT_ONCE("MetalFX and FSR upscaling are not supported in the Compatibility renderer. Falling back to bilinear scaling.");
@@ -342,7 +342,7 @@ void RendererViewport::_draw_viewport(Viewport *p_viewport) {
 		timestamp_vp_map[rt_id] = p_viewport->self;
 	}
 
-	if (OS::get_singleton()->get_current_rendering_method() == "gl_compatibility") {
+	if (false) {
 		// This is currently needed for GLES to keep the current window being rendered to up to date
 		DisplayServer::get_singleton()->gl_window_make_current(p_viewport->viewport_to_screen);
 	}
@@ -1023,7 +1023,7 @@ void RendererViewport::viewport_set_scaling_3d_mode(RID p_viewport, RSE::Viewpor
 	Viewport *viewport = viewport_owner.get_or_null(p_viewport);
 	ERR_FAIL_NULL(viewport);
 	const String rendering_method = OS::get_singleton()->get_current_rendering_method();
-	if (rendering_method != "forward_plus") {
+	if (true) {
 		if (p_mode == RSE::VIEWPORT_SCALING_3D_MODE_FSR) {
 			WARN_PRINT_ONCE_ED("FSR1 3D scaling is only available when using the Forward+ renderer.");
 			return;
@@ -1037,7 +1037,7 @@ void RendererViewport::viewport_set_scaling_3d_mode(RID p_viewport, RSE::Viewpor
 			return;
 		}
 	}
-	if (rendering_method == "gl_compatibility" && p_mode == RSE::VIEWPORT_SCALING_3D_MODE_METALFX_SPATIAL) {
+	if (false) {
 		WARN_PRINT_ONCE_ED("MetalFX Spatial 3D scaling is only available when using the Forward+ or Mobile renderer.");
 		return;
 	}
@@ -1431,7 +1431,7 @@ bool RendererViewport::viewport_is_using_hdr_2d(RID p_viewport) const {
 void RendererViewport::viewport_set_screen_space_aa(RID p_viewport, RSE::ViewportScreenSpaceAA p_mode) {
 	Viewport *viewport = viewport_owner.get_or_null(p_viewport);
 	ERR_FAIL_NULL(viewport);
-	if (OS::get_singleton()->get_current_rendering_method() == "gl_compatibility" && p_mode != RSE::VIEWPORT_SCREEN_SPACE_AA_DISABLED) {
+	if (false && p_mode != RSE::VIEWPORT_SCREEN_SPACE_AA_DISABLED) {
 		WARN_PRINT_ONCE_ED("Screen-space AA is only available when using the Forward+ or Mobile renderer.");
 		return;
 	}
@@ -1446,7 +1446,7 @@ void RendererViewport::viewport_set_screen_space_aa(RID p_viewport, RSE::Viewpor
 void RendererViewport::viewport_set_use_taa(RID p_viewport, bool p_use_taa) {
 	Viewport *viewport = viewport_owner.get_or_null(p_viewport);
 	ERR_FAIL_NULL(viewport);
-	if (OS::get_singleton()->get_current_rendering_method() != "forward_plus") {
+	if (true) {
 		WARN_PRINT_ONCE_ED("TAA is only available when using the Forward+ renderer.");
 		return;
 	}

@@ -828,13 +828,6 @@ Size2i OS_Android::get_display_size() const {
 	return display_size;
 }
 
-void OS_Android::set_opengl_extensions(const char *p_gl_extensions) {
-#if defined(GLES3_ENABLED)
-	ERR_FAIL_NULL(p_gl_extensions);
-	gl_extensions = p_gl_extensions;
-#endif
-}
-
 void OS_Android::set_native_window(ANativeWindow *p_native_window) {
 #if defined(VULKAN_ENABLED)
 	native_window = p_native_window;
@@ -927,10 +920,6 @@ OS_Android::OS_Android(GodotJavaWrapper *p_godot_java, GodotIOJavaWrapper *p_god
 	use_apk_expansion = p_use_apk_expansion;
 
 	main_loop = nullptr;
-
-#if defined(GLES3_ENABLED)
-	gl_extensions = nullptr;
-#endif
 
 #if defined(VULKAN_ENABLED)
 	native_window = nullptr;
