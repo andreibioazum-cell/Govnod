@@ -49,7 +49,6 @@
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/editor_main_screen.h"
 #include "editor/editor_node.h"
-#include "editor/export/lipo.h"
 #include "editor/file_system/editor_paths.h"
 #include "editor/run/editor_run_bar.h"
 #include "editor/script/script_editor_plugin.h"

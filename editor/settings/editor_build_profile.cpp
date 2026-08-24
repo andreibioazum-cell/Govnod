@@ -63,7 +63,6 @@ const char *EditorBuildProfile::build_option_identifiers[BUILD_OPTION_MAX] = {
 	"pulseaudio",
 	"alsa",
 	"rendering_device", // FIXME: There's no scons option to disable rendering device.
-	"forward_plus_renderer",
 	"forward_mobile_renderer",
 	"vulkan",
 	"d3d12",
@@ -673,48 +672,17 @@ EditorBuildProfile::EditorBuildProfile() {
 	build_option_settings.insert(BUILD_OPTION_X11, settings_x11);
 
 	HashMap<String, LocalVector<Variant>> settings_rd = {
-		{ "rendering/renderer/rendering_method", { "forward_plus", "mobile" } },
-		{ "rendering/renderer/rendering_method.mobile", { "forward_plus", "mobile" } },
-		{ "rendering/renderer/rendering_method.web", { "forward_plus", "mobile" } },
+		{ "rendering/renderer/rendering_method", { "mobile" } },
+		{ "rendering/renderer/rendering_method.mobile", { "mobile" } },
 	};
 	build_option_settings.insert(BUILD_OPTION_RENDERING_DEVICE, settings_rd);
 
 	HashMap<String, LocalVector<Variant>> settings_vulkan = {
 		{ "rendering/rendering_device/driver", { "vulkan" } },
-		{ "rendering/rendering_device/driver.windows", { "vulkan" } },
-		{ "rendering/rendering_device/driver.linuxbsd", { "vulkan" } },
 		{ "rendering/rendering_device/driver.android", { "vulkan" } },
-		{ "rendering/rendering_device/driver.ios", { "vulkan" } },
-		{ "rendering/rendering_device/driver.macos", { "vulkan" } },
 		{ "rendering/rendering_device/fallback_to_vulkan", { true } },
 	};
 	build_option_settings.insert(BUILD_OPTION_VULKAN, settings_vulkan);
-
-	HashMap<String, LocalVector<Variant>> settings_d3d12 = {
-		{ "rendering/rendering_device/driver", { "d3d12" } },
-		{ "rendering/rendering_device/driver.windows", { "d3d12" } },
-		{ "rendering/rendering_device/driver.linuxbsd", { "d3d12" } },
-		{ "rendering/rendering_device/driver.android", { "d3d12" } },
-		{ "rendering/rendering_device/driver.ios", { "d3d12" } },
-		{ "rendering/rendering_device/driver.macos", { "d3d12" } },
-		{ "rendering/rendering_device/fallback_to_d3d12", { true } },
-	};
-	build_option_settings.insert(BUILD_OPTION_D3D12, settings_d3d12);
-
-	HashMap<String, LocalVector<Variant>> settings_metal = {
-		{ "rendering/rendering_device/driver", { "metal" } },
-		{ "rendering/rendering_device/driver.ios", { "metal" } },
-		{ "rendering/rendering_device/driver.macos", { "metal" } },
-	};
-	build_option_settings.insert(BUILD_OPTION_METAL, settings_metal);
-
-	HashMap<String, LocalVector<Variant>> settings_opengl = {
-		{ "rendering/renderer/rendering_method", { "gl_compatibility" } },
-		{ "rendering/renderer/rendering_method.mobile", { "gl_compatibility" } },
-		{ "rendering/renderer/rendering_method.web", { "gl_compatibility" } },
-		{ "rendering/rendering_device/fallback_to_opengl3", { true } },
-	};
-	build_option_settings.insert(BUILD_OPTION_OPENGL, settings_opengl);
 
 	HashMap<String, LocalVector<Variant>> settings_phy_godot_3d = {
 		{ "physics/3d/physics_engine", { "DEFAULT", "GodotPhysics3D" } },

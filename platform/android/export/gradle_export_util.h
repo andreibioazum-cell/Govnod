@@ -105,7 +105,6 @@ Error _create_project_name_strings_files(const Ref<EditorExportPreset> &p_preset
 
 String bool_to_string(bool v);
 
-String _get_gles_tag();
 
 String _get_screen_sizes_tag(const Ref<EditorExportPreset> &p_preset);
 
