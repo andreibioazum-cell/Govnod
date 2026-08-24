@@ -52,9 +52,7 @@ GODOT_GCC_WARNING_IGNORE("-Wmaybe-uninitialized") // False positive raised when 
 GODOT_GCC_WARNING_IGNORE("-Warray-bounds")
 GODOT_GCC_WARNING_IGNORE("-Wrestrict")
 GODOT_GCC_PRAGMA(GCC diagnostic warning "-Wstringop-overflow=0") // Can't "ignore" this for some reason.
-#ifdef WINDOWS_ENABLED
-GODOT_GCC_PRAGMA(GCC diagnostic warning "-Wdangling-pointer=0") // Can't "ignore" this for some reason.
-#endif
+// Not needed on Android
 
 template <typename T>
 class CowData {

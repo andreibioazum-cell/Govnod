@@ -775,11 +775,7 @@ struct _VariantCall {
 		String s;
 		if (p_instance->size() > 0) {
 			const uint8_t *r = p_instance->ptr();
-#ifdef WINDOWS_ENABLED
-			s.append_utf16((const char16_t *)r, std::floor((double)p_instance->size() / (double)sizeof(char16_t)));
-#else
 			s.append_utf32(Span((const char32_t *)r, std::floor((double)p_instance->size() / (double)sizeof(char32_t))));
-#endif
 		}
 		return s;
 	}
