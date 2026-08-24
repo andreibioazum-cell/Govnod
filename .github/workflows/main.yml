@@ -1,20 +1,37 @@
-name: Android Debug APK
+name: Android arm64 Debug APK
 
 "on":
   push:
+    paths-ignore:
+      - "doc/**"
+      - "**.md"
+      - "LICENSE.txt"
+      - "COPYRIGHT.txt"
   pull_request:
+    paths-ignore:
+      - "doc/**"
+      - "**.md"
+      - "LICENSE.txt"
+      - "COPYRIGHT.txt"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: android-debug-apk-${{ github.ref }}
+  group: android-arm64-${{ github.ref }}
   cancel-in-progress: true
 
 env:
   SCONS_FLAGS: >-
     dev_mode=yes
+    disable_3d=yes
+    disable_physics_2d=yes
+    disable_physics_3d=yes
+    disable_navigation_2d=yes
+    disable_navigation_3d=yes
+    disable_advanced_gui=yes
+    disable_xr=yes
     module_text_server_fb_enabled=yes
     module_lightmapper_rd_enabled=no
     module_noise_enabled=no
@@ -34,116 +51,106 @@ env:
     module_squish_enabled=no
     module_basis_universal_enabled=no
     module_gltf_enabled=no
+    module_jolt_physics_enabled=no
     linker=mold
     debug_symbols=no
-    num_jobs=4
+    cache_path=${{ github.workspace }}/.scons-cache
+    cache_limit=3
 
 jobs:
-  compile:
+  compile-arm64:
     runs-on: ubuntu-24.04
-    name: Compile ${{ matrix.arch }}
-    timeout-minutes: 45
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [arm64, arm32]
+    name: Compile arm64 debug
+    timeout-minutes: 12
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-      - name: Install mold + ccache
+      - name: Install build tools
         run: |
-          sudo apt-get install -y mold ccache
-          echo "/usr/lib/ccache" >> $GITHUB_PATH
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq mold ccache
+          echo "/usr/lib/ccache" >> "$GITHUB_PATH"
 
-      - name: Restore ccache
+      - name: Restore compiler caches
         uses: actions/cache@v4
         with:
-          path: .ccache
-          key: ccache-android-${{ matrix.arch }}-${{ github.sha }}
+          path: |
+            .ccache
+            .scons-cache
+          key: android-arm64-${{ hashFiles('SConstruct', '**/SCsub', '**/*.py', 'platform/android/**') }}
           restore-keys: |
-            ccache-android-${{ matrix.arch }}-
+            android-arm64-
 
-      - name: Set up Python + SCons
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.x"
+          cache: pip
 
       - name: Install SCons
-        run: pip install scons==4.10.1
+        run: pip install --disable-pip-version-check scons==4.10.1
 
-      - name: Install Perfetto + Swappy
+      - name: Install Android dependencies
         run: |
           python misc/scripts/install_perfetto.py
           python misc/scripts/install_swappy_android.py
 
       - name: Configure ccache
         run: |
-          ccache --set-config=cache_dir=${{ github.workspace }}/.ccache
+          ccache --set-config=cache_dir="${{ github.workspace }}/.ccache"
           ccache --set-config=max_size=2G
           ccache --set-config=compression=true
-          ccache --zero-stats
+          ccache --set-config=sloppiness=time_macros,file_stat_matches
 
-      - name: Compile ${{ matrix.arch }} debug
+      - name: Compile arm64 debug
         run: |
-          scons platform=android target=template_debug arch=${{ matrix.arch }} ${{ env.SCONS_FLAGS }}
+          scons platform=android target=template_debug arch=arm64 ${{ env.SCONS_FLAGS }}
 
-      - name: ccache stats
-        if: always()
-        run: ccache --show-stats
-
-      - name: Upload template
+      - name: Upload arm64 template
         uses: actions/upload-artifact@v4
         with:
-          name: template-${{ matrix.arch }}
-          path: bin/libgodot.android.template_debug.${{ matrix.arch }}.so
+          name: template-arm64
+          path: bin/libgodot.android.template_debug.arm64.so
           retention-days: 1
           if-no-files-found: error
 
   assemble-apk:
-    needs: compile
+    needs: compile-arm64
     runs-on: ubuntu-24.04
-    name: Assemble APK
-    timeout-minutes: 20
+    name: Assemble arm64 APK
+    timeout-minutes: 10
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
+          cache: gradle
 
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('platform/android/java/**/*.gradle*', 'platform/android/java/**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-
-
-      - name: Download templates
+      - name: Download arm64 template
         uses: actions/download-artifact@v4
         with:
-          pattern: template-*
+          name: template-arm64
           path: bin/
-          merge-multiple: true
 
       - name: Generate APK
-        run: |
-          cd platform/android/java
-          ./gradlew generateGodotTemplates --no-daemon --parallel
-          cd ../../..
+        working-directory: platform/android/java
+        run: ./gradlew generateGodotTemplates --no-daemon --parallel --build-cache
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: android-debug-apk
+          name: android-arm64-debug-apk
           path: bin/android_debug.apk
-          if-no-files-found: error
           retention-days: 30
+          if-no-files-found: error
