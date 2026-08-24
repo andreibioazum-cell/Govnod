@@ -27,7 +27,6 @@ env:
     module_camera_enabled=no
     module_mobile_vr_enabled=no
     module_raycast_enabled=no
-    module_regex_enabled=no
     module_vorbis_enabled=no
     module_theora_enabled=no
     module_minimp3_enabled=no
@@ -73,6 +72,11 @@ jobs:
 
       - name: Install SCons
         run: pip install scons==4.10.1
+
+      - name: Install Perfetto + Swappy
+        run: |
+          python misc/scripts/install_perfetto.py
+          python misc/scripts/install_swappy_android.py
 
       - name: Configure ccache
         run: |
