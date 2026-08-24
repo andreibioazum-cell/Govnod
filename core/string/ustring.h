@@ -66,13 +66,8 @@ constexpr size_t strlen(const char32_t *p_str) {
 // strlen equivalent function for wchar_t * arguments; depends on the platform.
 constexpr size_t strlen(const wchar_t *p_str) {
 	// Use static_cast twice because reinterpret_cast is not allowed in constexpr
-#ifdef WINDOWS_ENABLED
-	// wchar_t is 16-bit
-	return strlen(static_cast<const char16_t *>(static_cast<const void *>(p_str)));
-#else
-	// wchar_t is 32-bit
+	// wchar_t is 32-bit (not Windows)
 	return strlen(static_cast<const char32_t *>(static_cast<const void *>(p_str)));
-#endif
 }
 
 // strnlen equivalent function for char16_t * arguments.
@@ -96,13 +91,8 @@ constexpr size_t strnlen(const char32_t *p_str, size_t p_clip_to_len) {
 // strnlen equivalent function for wchar_t * arguments; depends on the platform.
 constexpr size_t strnlen(const wchar_t *p_str, size_t p_clip_to_len) {
 	// Use static_cast twice because reinterpret_cast is not allowed in constexpr
-#ifdef WINDOWS_ENABLED
-	// wchar_t is 16-bit
-	return strnlen(static_cast<const char16_t *>(static_cast<const void *>(p_str)), p_clip_to_len);
-#else
-	// wchar_t is 32-bit
+	// wchar_t is 32-bit (not Windows)
 	return strnlen(static_cast<const char32_t *>(static_cast<const void *>(p_str)), p_clip_to_len);
-#endif
 }
 
 template <typename L, typename R>
@@ -290,13 +280,8 @@ class [[nodiscard]] _WARN_UNUSED_ String {
 		append_utf32(Span(p_cstr, p_cstr ? strlen(p_cstr) : 0));
 	}
 	void append_wstring(const wchar_t *p_cstr) {
-#ifdef WINDOWS_ENABLED
-		// wchar_t is 16-bit, parse as UTF-16
-		append_utf16((const char16_t *)p_cstr);
-#else
-		// wchar_t is 32-bit, copy directly
+		// wchar_t is 32-bit (not Windows), copy directly
 		append_utf32((const char32_t *)p_cstr);
-#endif
 	}
 
 	bool _base_is_subsequence_of(const String &p_string, bool p_case_insensitive) const;
@@ -574,13 +559,8 @@ public:
 
 	// wchar_t copy_from depends on the platform.
 	Error append_wstring(const Span<wchar_t> &p_cstr) {
-#ifdef WINDOWS_ENABLED
-		// wchar_t is 16-bit, parse as UTF-16
-		return append_utf16((const char16_t *)p_cstr.ptr(), p_cstr.size());
-#else
-		// wchar_t is 32-bit, copy directly
+		// wchar_t is 32-bit (not Windows), copy directly
 		return append_utf32((Span<char32_t> &)p_cstr);
-#endif
 	}
 	static String wstring(const Span<wchar_t> &p_string) {
 		String string;

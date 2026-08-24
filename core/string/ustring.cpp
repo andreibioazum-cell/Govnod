@@ -269,13 +269,8 @@ String operator+(const char *p_chr, const String &p_str) {
 }
 
 String operator+(const wchar_t *p_chr, const String &p_str) {
-#ifdef WINDOWS_ENABLED
-	// wchar_t is 16-bit
-	String tmp = String::utf16((const char16_t *)p_chr);
-#else
-	// wchar_t is 32-bit
+	// wchar_t is 32-bit (not Windows)
 	String tmp = (const char32_t *)p_chr;
-#endif
 	tmp += p_str;
 	return tmp;
 }
@@ -299,13 +294,8 @@ String &String::operator+=(const char *p_str) {
 }
 
 String &String::operator+=(const wchar_t *p_str) {
-#ifdef WINDOWS_ENABLED
-	// wchar_t is 16-bit
-	*this += String::utf16((const char16_t *)p_str);
-#else
-	// wchar_t is 32-bit
+	// wchar_t is 32-bit (not Windows)
 	*this += String((const char32_t *)p_str);
-#endif
 	return *this;
 }
 
@@ -325,13 +315,8 @@ bool String::operator==(const char *p_str) const {
 }
 
 bool String::operator==(const wchar_t *p_str) const {
-#ifdef WINDOWS_ENABLED
-	// wchar_t is 16-bit, parse as UTF-16
-	return *this == String::utf16((const char16_t *)p_str);
-#else
-	// wchar_t is 32-bit, compare char by char
+	// wchar_t is 32-bit (not Windows), compare char by char
 	return *this == (const char32_t *)p_str;
-#endif
 }
 
 bool String::operator==(const char32_t *p_str) const {
@@ -352,13 +337,8 @@ bool operator==(const char *p_chr, const String &p_str) {
 }
 
 bool operator==(const wchar_t *p_chr, const String &p_str) {
-#ifdef WINDOWS_ENABLED
-	// wchar_t is 16-bit
-	return p_str == String::utf16((const char16_t *)p_chr);
-#else
-	// wchar_t is 32-bit
+	// wchar_t is 32-bit (not Windows)
 	return p_str == (const char32_t *)p_chr;
-#endif
 }
 
 bool operator!=(const char *p_chr, const String &p_str) {
@@ -366,13 +346,8 @@ bool operator!=(const char *p_chr, const String &p_str) {
 }
 
 bool operator!=(const wchar_t *p_chr, const String &p_str) {
-#ifdef WINDOWS_ENABLED
-	// wchar_t is 16-bit
-	return !(p_str == String::utf16((const char16_t *)p_chr));
-#else
-	// wchar_t is 32-bit
+	// wchar_t is 32-bit (not Windows)
 	return !(p_str == String((const char32_t *)p_chr));
-#endif
 }
 
 bool String::operator!=(const char *p_str) const {
@@ -421,13 +396,8 @@ bool String::operator<(const wchar_t *p_str) const {
 		return true;
 	}
 
-#ifdef WINDOWS_ENABLED
-	// wchar_t is 16-bit
-	return str_compare(get_data(), String::utf16((const char16_t *)p_str).get_data()) < 0;
-#else
-	// wchar_t is 32-bit
+	// wchar_t is 32-bit (not Windows)
 	return str_compare(get_data(), (const char32_t *)p_str) < 0;
-#endif
 }
 
 bool String::operator<(const char32_t *p_str) const {
@@ -5692,11 +5662,8 @@ Vector<uint8_t> String::to_utf32_buffer() const {
 }
 
 Vector<uint8_t> String::to_wchar_buffer() const {
-#ifdef WINDOWS_ENABLED
-	return to_utf16_buffer();
-#else
+	// wchar_t is 32-bit (not Windows)
 	return to_utf32_buffer();
-#endif
 }
 
 Vector<uint8_t> String::to_multibyte_char_buffer(const String &p_encoding) const {
