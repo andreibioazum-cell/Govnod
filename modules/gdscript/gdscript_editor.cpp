@@ -1902,7 +1902,6 @@ static HashMap<String, Dictionary> make_structure_samples() {
 		d.set("founders", arr);
 		d.set("project_managers", arr);
 		d.set("developers", arr);
-		res["Engine::get_author_info"] = d;
 	}
 
 	{
@@ -1915,7 +1914,6 @@ static HashMap<String, Dictionary> make_structure_samples() {
 		d.set("gold_donors", arr);
 		d.set("silver_donors", arr);
 		d.set("bronze_donors", arr);
-		res["Engine::get_donor_info"] = d;
 	}
 
 	{

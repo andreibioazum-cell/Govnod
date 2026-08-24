@@ -199,8 +199,7 @@ EditorPropertyNameProcessor::EditorPropertyNameProcessor() {
 	capitalize_string_remaps["glb"] = "GLB";
 	capitalize_string_remaps["gles"] = "GLES";
 	capitalize_string_remaps["gles2"] = "GLES2";
-	capitalize_string_remaps["gles3"] = "GLES3";
-	capitalize_string_remaps["gltf"] = "glTF";
+		capitalize_string_remaps["gltf"] = "glTF";
 	capitalize_string_remaps["gridmap"] = "GridMap";
 	capitalize_string_remaps["gpu"] = "GPU";
 	capitalize_string_remaps["gui"] = "GUI";
@@ -253,8 +252,7 @@ EditorPropertyNameProcessor::EditorPropertyNameProcessor() {
 	capitalize_string_remaps["oidn"] = "OIDN";
 	capitalize_string_remaps["ok"] = "OK";
 	capitalize_string_remaps["opengl"] = "OpenGL";
-	capitalize_string_remaps["opengl3"] = "OpenGL 3";
-	capitalize_string_remaps["opentype"] = "OpenType";
+		capitalize_string_remaps["opentype"] = "OpenType";
 	capitalize_string_remaps["openxr"] = "OpenXR";
 	capitalize_string_remaps["osslsigncode"] = "osslsigncode";
 	capitalize_string_remaps["path3d"] = "Path3D";

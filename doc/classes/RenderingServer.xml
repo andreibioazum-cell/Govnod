@@ -1635,16 +1635,15 @@
 		<method name="get_current_rendering_driver_name" qualifiers="const">
 			<return type="String" />
 			<description>
-				Returns the name of the current rendering driver. This can be [code]vulkan[/code], [code]d3d12[/code], [code]metal[/code], [code]opengl3[/code], [code]opengl3_es[/code], or [code]opengl3_angle[/code]. See also [method get_current_rendering_method].
-				When [member ProjectSettings.rendering/renderer/rendering_method] is [code]forward_plus[/code] or [code]mobile[/code], the rendering driver is determined by [member ProjectSettings.rendering/rendering_device/driver].
-				When [member ProjectSettings.rendering/renderer/rendering_method] is [code]gl_compatibility[/code], the rendering driver is determined by [member ProjectSettings.rendering/gl_compatibility/driver].
+				Returns the name of the current rendering driver. This can be [code]vulkan[/code]. See also [method get_current_rendering_method].
+				When [member ProjectSettings.rendering/renderer/rendering_method] is [code]mobile[/code], the rendering driver is determined by [member ProjectSettings.rendering/rendering_device/driver].
 				The rendering driver is also determined by the [code]--rendering-driver[/code] command line argument that overrides this project setting, or an automatic fallback that is applied depending on the hardware.
 			</description>
 		</method>
 		<method name="get_current_rendering_method" qualifiers="const">
 			<return type="String" />
 			<description>
-				Returns the name of the current rendering method. This can be [code]forward_plus[/code], [code]mobile[/code], or [code]gl_compatibility[/code]. See also [method get_current_rendering_driver_name].
+				Returns the name of the current rendering method. This can be [code]mobile[/code]. See also [method get_current_rendering_driver_name].
 				The rendering method is determined by [member ProjectSettings.rendering/renderer/rendering_method], the [code]--rendering-method[/code] command line argument that overrides this project setting, or an automatic fallback that is applied depending on the hardware.
 			</description>
 		</method>
@@ -4471,7 +4470,7 @@
 			<description>
 				Affects the final texture sharpness by reading from a lower or higher mipmap (also called "texture LOD bias"). Negative values make mipmapped textures sharper but grainier when viewed at a distance, while positive values make mipmapped textures blurrier (even when up close). To get sharper textures at a distance without introducing too much graininess, set this between [code]-0.75[/code] and [code]0.0[/code]. Enabling temporal antialiasing ([member ProjectSettings.rendering/anti_aliasing/quality/use_taa]) can help reduce the graininess visible when using negative mipmap bias.
 				[b]Note:[/b] When the 3D scaling mode is set to FSR 1.0, this value is used to adjust the automatic mipmap bias which is calculated internally based on the scale factor. The formula for this is [code]-log2(1.0 / scale) + mipmap_bias[/code].
-				[b]Note:[/b] This method is only supported in the Forward+ and Mobile renderers, not Compatibility. In Compatibility, this method is always treated as if [param mipmap_bias] was set to [code]0.0[/code].
+				[b]Note:[/b] This method is only supported in The Mobile renderer, not Compatibility. In Compatibility, this method is always treated as if [param mipmap_bias] was set to [code]0.0[/code].
 			</description>
 		</method>
 		<method name="viewport_set_transparent_background">
@@ -5566,7 +5565,7 @@
 		<constant name="VIEWPORT_DEBUG_DRAW_WIREFRAME" value="4" enum="ViewportDebugDraw">
 			Debug draw draws objects in wireframe.
 			[b]Note:[/b] [method set_debug_generate_wireframes] must be called before loading any meshes for wireframes to be visible when using the Compatibility renderer.
-			[b]Note:[/b] In the Compatibility renderer, backfaces are always visible when using wireframe rendering. In the Forward+ and Mobile renderers, wireframes follow the material's backface culling properties instead.
+			[b]Note:[/b] In the Compatibility renderer, backfaces are always visible when using wireframe rendering. In The Mobile renderer, wireframes follow the material's backface culling properties instead.
 		</constant>
 		<constant name="VIEWPORT_DEBUG_DRAW_NORMAL_BUFFER" value="5" enum="ViewportDebugDraw">
 			Normal buffer is drawn instead of regular scene so you can see the per-pixel normals that will be used by post-processing effects.

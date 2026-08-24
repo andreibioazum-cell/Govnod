@@ -50,12 +50,6 @@
 #endif
 #endif
 
-#ifdef GLES3_ENABLED
-#include "drivers/gles3/rasterizer_gles3.h"
-
-#include <EGL/egl.h>
-#endif
-
 #if defined(RD_ENABLED)
 static RenderingContextDriver *rendering_context_global = nullptr;
 static bool rendering_context_global_checked = false;
@@ -508,28 +502,6 @@ int64_t DisplayServerAndroid::window_get_native_handle(DisplayServerEnums::Handl
 		case DisplayServerEnums::WINDOW_VIEW: {
 			return 0; // Not supported.
 		}
-#ifdef GLES3_ENABLED
-		case DisplayServerEnums::DISPLAY_HANDLE: {
-			if (rendering_driver == "opengl3") {
-				return reinterpret_cast<int64_t>(eglGetCurrentDisplay());
-			}
-			return 0;
-		}
-		case DisplayServerEnums::OPENGL_CONTEXT: {
-			if (rendering_driver == "opengl3") {
-				return reinterpret_cast<int64_t>(eglGetCurrentContext());
-			}
-			return 0;
-		}
-		case DisplayServerEnums::EGL_DISPLAY: {
-			// @todo Find a way to get this from the Java side.
-			return 0;
-		}
-		case DisplayServerEnums::EGL_CONFIG: {
-			// @todo Find a way to get this from the Java side.
-			return 0;
-		}
-#endif
 		default: {
 			return 0;
 		}
@@ -667,9 +639,6 @@ void DisplayServerAndroid::process_events() {
 Vector<String> DisplayServerAndroid::get_rendering_drivers_func() {
 	Vector<String> drivers;
 
-#ifdef GLES3_ENABLED
-	drivers.push_back("opengl3");
-#endif
 #ifdef VULKAN_ENABLED
 	drivers.push_back("vulkan");
 #endif
@@ -680,16 +649,10 @@ Vector<String> DisplayServerAndroid::get_rendering_drivers_func() {
 DisplayServer *DisplayServerAndroid::create_func(const String &p_rendering_driver, DisplayServerEnums::WindowMode p_mode, DisplayServerEnums::VSyncMode p_vsync_mode, uint32_t p_flags, const Vector2i *p_position, const Vector2i &p_resolution, int p_screen, DisplayServerEnums::Context p_context, int64_t p_parent_window, Error &r_error) {
 	DisplayServer *ds = memnew(DisplayServerAndroid(p_rendering_driver, p_mode, p_vsync_mode, p_flags, p_position, p_resolution, p_screen, p_context, p_parent_window, r_error));
 	if (r_error != OK) {
-		if (p_rendering_driver == "vulkan") {
-			OS::get_singleton()->alert(
-					"Your device seems not to support the required Vulkan version.\n\n"
-					"Please try exporting your game using the 'gl_compatibility' renderer.",
-					"Unable to initialize Vulkan video driver");
-		} else {
-			OS::get_singleton()->alert(
-					"Your device seems not to support the required OpenGL ES 3.0 version.",
-					"Unable to initialize OpenGL video driver");
-		}
+		OS::get_singleton()->alert(
+				"Your device seems not to support the required Vulkan version.\n\n"
+				"The Mobile renderer requires a Vulkan capable device.",
+				"Unable to initialize Vulkan video driver");
 	}
 	return ds;
 }
@@ -701,7 +664,6 @@ void DisplayServerAndroid::register_android_driver() {
 #ifdef VULKAN_ENABLED
 bool DisplayServerAndroid::check_vulkan_global_context(bool p_vulkan_requirements_met) {
 	if (!rendering_context_global_checked) {
-		bool fallback_to_opengl3 = GLOBAL_GET("rendering/rendering_device/fallback_to_opengl3");
 		Error err = ERR_CANT_CREATE;
 		if (p_vulkan_requirements_met) {
 			rendering_context_global = memnew(RenderingContextDriverVulkanAndroid);
@@ -714,13 +676,6 @@ bool DisplayServerAndroid::check_vulkan_global_context(bool p_vulkan_requirement
 				rendering_context_global = nullptr;
 			}
 
-#if defined(GLES3_ENABLED)
-			if (fallback_to_opengl3) {
-				WARN_PRINT("Your device does not seem to support Vulkan, switching to OpenGL 3.");
-				OS::get_singleton()->set_current_rendering_driver_name("opengl3", OS::RENDERING_SOURCE_FALLBACK);
-				OS::get_singleton()->set_current_rendering_method("gl_compatibility", OS::RENDERING_SOURCE_FALLBACK);
-			} else
-#endif
 			{
 				ERR_PRINT("Failed to initialize Vulkan context.");
 			}
@@ -836,12 +791,6 @@ DisplayServerAndroid::DisplayServerAndroid(const String &p_rendering_driver, Dis
 		rendering_device->screen_create(DisplayServerEnums::MAIN_WINDOW_ID);
 
 		RendererCompositorRD::make_current();
-	}
-#endif
-
-#if defined(GLES3_ENABLED)
-	if (rendering_driver == "opengl3") {
-		RasterizerGLES3::make_current(false);
 	}
 #endif
 

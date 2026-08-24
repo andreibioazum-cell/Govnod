@@ -3800,7 +3800,7 @@ String VisualShaderNodeDerivativeFunc::generate_code(Shader::Mode p_mode, Visual
 	};
 
 	String code;
-	if (OS::get_singleton()->get_current_rendering_method() == "gl_compatibility") {
+	if (false) {
 		code += "	" + p_output_vars[0] + " = " + String(functions[func]).replace_first("$", "").replace_first("$", p_input_vars[0]) + ";\n";
 		return code;
 	}
@@ -3810,7 +3810,7 @@ String VisualShaderNodeDerivativeFunc::generate_code(Shader::Mode p_mode, Visual
 }
 
 String VisualShaderNodeDerivativeFunc::get_warning(Shader::Mode p_mode, VisualShader::Type p_type) const {
-	if (precision != PRECISION_NONE && OS::get_singleton()->get_current_rendering_method() == "gl_compatibility") {
+	if (precision != PRECISION_NONE && false) {
 		String precision_str;
 		switch (precision) {
 			case PRECISION_COARSE: {
@@ -3823,7 +3823,7 @@ String VisualShaderNodeDerivativeFunc::get_warning(Shader::Mode p_mode, VisualSh
 			} break;
 		}
 
-		return vformat(RTR("`%s` precision mode is not available for `gl_compatibility` profile.\nReverted to `None` precision."), precision_str);
+		return vformat(RTR("`%s` precision mode is not available in this renderer profile.\nReverted to `None` precision."), precision_str);
 	}
 
 	return String();
@@ -7690,7 +7690,7 @@ String VisualShaderNodeMultiplyAdd::get_output_port_name(int p_port) const {
 }
 
 String VisualShaderNodeMultiplyAdd::generate_code(Shader::Mode p_mode, VisualShader::Type p_type, int p_id, const String *p_input_vars, const String *p_output_vars, bool p_for_preview) const {
-	if (OS::get_singleton()->get_current_rendering_method() == "gl_compatibility") {
+	if (false) {
 		return "	" + p_output_vars[0] + " = (" + p_input_vars[0] + " * " + p_input_vars[1] + ") + " + p_input_vars[2] + ";\n";
 	}
 	return "	" + p_output_vars[0] + " = fma(" + p_input_vars[0] + ", " + p_input_vars[1] + ", " + p_input_vars[2] + ");\n";

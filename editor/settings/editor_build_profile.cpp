@@ -54,21 +54,11 @@ const char *EditorBuildProfile::build_option_identifiers[BUILD_OPTION_MAX] = {
 	"disable_3d",
 	"disable_navigation_2d",
 	"disable_navigation_3d",
-	"accesskit",
-	"sdl",
 	"disable_xr",
 	"module_openxr_enabled",
-	"wayland",
-	"x11",
-	"pulseaudio",
-	"alsa",
 	"rendering_device", // FIXME: There's no scons option to disable rendering device.
-	"forward_plus_renderer",
 	"forward_mobile_renderer",
 	"vulkan",
-	"d3d12",
-	"metal",
-	"opengl3",
 	"disable_physics_2d",
 	"module_godot_physics_2d_enabled",
 	"disable_physics_3d",
@@ -87,21 +77,11 @@ const bool EditorBuildProfile::build_option_disabled_by_default[BUILD_OPTION_MAX
 	false, // 3D
 	false, // NAVIGATION_2D
 	false, // NAVIGATION_3D
-	false, // ACCESSKIT
-	false, // SDL
 	false, // XR
 	false, // OPENXR
-	false, // WAYLAND
-	false, // X11
-	false, // PULSEAUDIO
-	false, // ALSA
 	false, // RENDERING_DEVICE
-	false, // FORWARD_RENDERER
 	false, // MOBILE_RENDERER
 	false, // VULKAN
-	false, // D3D12
-	false, // METAL
-	false, // OPENGL
 	false, // PHYSICS_2D
 	false, // PHYSICS_GODOT_2D
 	false, // PHYSICS_3D
@@ -120,21 +100,11 @@ const bool EditorBuildProfile::build_option_disable_values[BUILD_OPTION_MAX] = {
 	true, // 3D
 	true, // NAVIGATION_2D
 	true, // NAVIGATION_3D
-	false, // ACCESSKIT
-	false, // SDL
 	true, // XR
 	false, // OPENXR
-	false, // WAYLAND
-	false, // X11
-	false, // PULSEAUDIO
-	false, // ALSA
 	false, // RENDERING_DEVICE
-	false, // FORWARD_RENDERER
 	false, // MOBILE_RENDERER
 	false, // VULKAN
-	false, // D3D12
-	false, // METAL
-	false, // OPENGL
 	true, // PHYSICS_2D
 	false, // PHYSICS_GODOT_2D
 	true, // PHYSICS_3D
@@ -153,21 +123,11 @@ const bool EditorBuildProfile::build_option_explicit_use[BUILD_OPTION_MAX] = {
 	false, // 3D
 	false, // NAVIGATION_2D
 	false, // NAVIGATION_3D
-	false, // ACCESSKIT
-	false, // SDL
 	false, // XR
 	false, // OPENXR
-	false, // WAYLAND
-	false, // X11
-	false, // PULSEAUDIO
-	false, // ALSA
 	false, // RENDERING_DEVICE
-	false, // FORWARD_RENDERER
 	false, // MOBILE_RENDERER
 	false, // VULKAN
-	false, // D3D12
-	false, // METAL
-	false, // OPENGL
 	false, // PHYSICS_2D
 	false, // PHYSICS_GODOT_2D
 	false, // PHYSICS_3D
@@ -185,21 +145,11 @@ const EditorBuildProfile::BuildOptionCategory EditorBuildProfile::build_option_c
 	BUILD_OPTION_CATEGORY_GENERAL, // 3D
 	BUILD_OPTION_CATEGORY_GENERAL, // NAVIGATION_2D
 	BUILD_OPTION_CATEGORY_GENERAL, // NAVIGATION_3D
-	BUILD_OPTION_CATEGORY_GENERAL, // ACCESSKIT
-	BUILD_OPTION_CATEGORY_GENERAL, // SDL
 	BUILD_OPTION_CATEGORY_GENERAL, // XR
 	BUILD_OPTION_CATEGORY_GENERAL, // OPENXR
-	BUILD_OPTION_CATEGORY_GENERAL, // WAYLAND
-	BUILD_OPTION_CATEGORY_GENERAL, // X11
-	BUILD_OPTION_CATEGORY_GENERAL, // PULSEAUDIO
-	BUILD_OPTION_CATEGORY_GENERAL, // ALSA
 	BUILD_OPTION_CATEGORY_GRAPHICS, // RENDERING_DEVICE
-	BUILD_OPTION_CATEGORY_GRAPHICS, // FORWARD_RENDERER
 	BUILD_OPTION_CATEGORY_GRAPHICS, // MOBILE_RENDERER
 	BUILD_OPTION_CATEGORY_GRAPHICS, // VULKAN
-	BUILD_OPTION_CATEGORY_GRAPHICS, // D3D12
-	BUILD_OPTION_CATEGORY_GRAPHICS, // METAL
-	BUILD_OPTION_CATEGORY_GRAPHICS, // OPENGL
 	BUILD_OPTION_CATEGORY_PHYSICS, // PHYSICS_2D
 	BUILD_OPTION_CATEGORY_PHYSICS, // PHYSICS_GODOT_2D
 	BUILD_OPTION_CATEGORY_PHYSICS, // PHYSICS_3D
@@ -222,22 +172,10 @@ const HashMap<EditorBuildProfile::BuildOption, LocalVector<EditorBuildProfile::B
 	{ BUILD_OPTION_OPENXR, {
 			BUILD_OPTION_XR,
 	} },
-	{ BUILD_OPTION_FORWARD_RENDERER, {
-			BUILD_OPTION_RENDERING_DEVICE,
-	} },
 	{ BUILD_OPTION_MOBILE_RENDERER, {
 			BUILD_OPTION_RENDERING_DEVICE,
 	} },
 	{ BUILD_OPTION_VULKAN, {
-			BUILD_OPTION_FORWARD_RENDERER,
-			BUILD_OPTION_MOBILE_RENDERER,
-	} },
-	{ BUILD_OPTION_D3D12, {
-			BUILD_OPTION_FORWARD_RENDERER,
-			BUILD_OPTION_MOBILE_RENDERER,
-	} },
-	{ BUILD_OPTION_METAL, {
-			BUILD_OPTION_FORWARD_RENDERER,
 			BUILD_OPTION_MOBILE_RENDERER,
 	} },
 	{ BUILD_OPTION_PHYSICS_GODOT_2D, {
@@ -410,21 +348,11 @@ String EditorBuildProfile::get_build_option_name(BuildOption p_build_option) {
 		TTRC("3D Engine"),
 		TTRC("Navigation (2D)"),
 		TTRC("Navigation (3D)"),
-		TTRC("Accessibility Support (AccessKit)"),
-		TTRC("Improved Gamepad Support (SDL)"),
 		TTRC("XR"),
 		TTRC("OpenXR"),
-		TTRC("Wayland"),
-		TTRC("X11"),
-		TTRC("PulseAudio"),
-		TTRC("ALSA"),
 		TTRC("RenderingDevice"),
-		TTRC("Forward+ Renderer"),
 		TTRC("Mobile Renderer"),
 		TTRC("Vulkan"),
-		TTRC("D3D12"),
-		TTRC("Metal"),
-		TTRC("OpenGL"),
 		TTRC("Physics Server (2D)"),
 		TTRC("Godot Physics (2D)"),
 		TTRC("Physics Server (3D)"),
@@ -447,21 +375,11 @@ String EditorBuildProfile::get_build_option_description(BuildOption p_build_opti
 		TTRC("3D Nodes as well as RenderingServer access to 3D features.\nNote that the Geometry3D singleton remains available even with this item disabled."),
 		TTRC("NavigationServer and capabilities for 2D."),
 		TTRC("NavigationServer and capabilities for 3D."),
-		TTRC("Support for screen readers using the AccessKit library."),
-		TTRC("Improved gamepad support on Windows, macOS, and Linux using the SDL library.\nIf disabled, built-in custom code is used for gamepad support instead, which may be less reliable for certain controller models."),
 		TTRC("XR (AR and VR)."),
 		TTRC("OpenXR standard implementation (requires XR to be enabled)."),
-		TTRC("Wayland display server support (Linux only)."),
-		TTRC("X11 display server support (Linux only)."),
-		TTRC("PulseAudio audio driver (Linux only)."),
-		TTRC("ALSA audio driver (Linux only)."),
-		TTRC("RenderingDevice-based rendering (if disabled, the OpenGL backend is required)."),
-		TTRC("Forward+ renderer for advanced 3D graphics."),
+		TTRC("RenderingDevice-based rendering (required by the Mobile renderer)."),
 		TTRC("Mobile renderer for less advanced 3D graphics."),
 		TTRC("Vulkan backend of RenderingDevice."),
-		TTRC("Direct3D 12 backend of RenderingDevice."),
-		TTRC("Metal backend of RenderingDevice (Apple arm64 only)."),
-		TTRC("OpenGL backend (if disabled, the RenderingDevice backend is required)."),
 		TTRC("PhysicsServer and capabilities for 2D."),
 		TTRC("Godot Physics backend (2D)."),
 		TTRC("PhysicsServer and capabilities for 3D."),
@@ -625,15 +543,9 @@ void EditorBuildProfile::_bind_methods() {
 	BIND_ENUM_CONSTANT(BUILD_OPTION_NAVIGATION_3D);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_XR);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_OPENXR);
-	BIND_ENUM_CONSTANT(BUILD_OPTION_WAYLAND);
-	BIND_ENUM_CONSTANT(BUILD_OPTION_X11);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_RENDERING_DEVICE);
-	BIND_ENUM_CONSTANT(BUILD_OPTION_FORWARD_RENDERER);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_MOBILE_RENDERER);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_VULKAN);
-	BIND_ENUM_CONSTANT(BUILD_OPTION_D3D12);
-	BIND_ENUM_CONSTANT(BUILD_OPTION_METAL);
-	BIND_ENUM_CONSTANT(BUILD_OPTION_OPENGL);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_PHYSICS_2D);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_PHYSICS_GODOT_2D);
 	BIND_ENUM_CONSTANT(BUILD_OPTION_PHYSICS_3D);
@@ -661,307 +573,6 @@ EditorBuildProfile::EditorBuildProfile() {
 		{ "xr/openxr/enabled", { true } },
 	};
 	build_option_settings.insert(BUILD_OPTION_OPENXR, settings_openxr);
-
-	HashMap<String, LocalVector<Variant>> settings_wayland = {
-		{ "display/display_server/driver.linuxbsd", { "default", "wayland" } },
-	};
-	build_option_settings.insert(BUILD_OPTION_WAYLAND, settings_wayland);
-
-	HashMap<String, LocalVector<Variant>> settings_x11 = {
-		{ "display/display_server/driver.linuxbsd", { "default", "x11" } },
-	};
-	build_option_settings.insert(BUILD_OPTION_X11, settings_x11);
-
-	HashMap<String, LocalVector<Variant>> settings_rd = {
-		{ "rendering/renderer/rendering_method", { "forward_plus", "mobile" } },
-		{ "rendering/renderer/rendering_method.mobile", { "forward_plus", "mobile" } },
-		{ "rendering/renderer/rendering_method.web", { "forward_plus", "mobile" } },
-	};
-	build_option_settings.insert(BUILD_OPTION_RENDERING_DEVICE, settings_rd);
-
-	HashMap<String, LocalVector<Variant>> settings_vulkan = {
-		{ "rendering/rendering_device/driver", { "vulkan" } },
-		{ "rendering/rendering_device/driver.windows", { "vulkan" } },
-		{ "rendering/rendering_device/driver.linuxbsd", { "vulkan" } },
-		{ "rendering/rendering_device/driver.android", { "vulkan" } },
-		{ "rendering/rendering_device/driver.ios", { "vulkan" } },
-		{ "rendering/rendering_device/driver.macos", { "vulkan" } },
-		{ "rendering/rendering_device/fallback_to_vulkan", { true } },
-	};
-	build_option_settings.insert(BUILD_OPTION_VULKAN, settings_vulkan);
-
-	HashMap<String, LocalVector<Variant>> settings_d3d12 = {
-		{ "rendering/rendering_device/driver", { "d3d12" } },
-		{ "rendering/rendering_device/driver.windows", { "d3d12" } },
-		{ "rendering/rendering_device/driver.linuxbsd", { "d3d12" } },
-		{ "rendering/rendering_device/driver.android", { "d3d12" } },
-		{ "rendering/rendering_device/driver.ios", { "d3d12" } },
-		{ "rendering/rendering_device/driver.macos", { "d3d12" } },
-		{ "rendering/rendering_device/fallback_to_d3d12", { true } },
-	};
-	build_option_settings.insert(BUILD_OPTION_D3D12, settings_d3d12);
-
-	HashMap<String, LocalVector<Variant>> settings_metal = {
-		{ "rendering/rendering_device/driver", { "metal" } },
-		{ "rendering/rendering_device/driver.ios", { "metal" } },
-		{ "rendering/rendering_device/driver.macos", { "metal" } },
-	};
-	build_option_settings.insert(BUILD_OPTION_METAL, settings_metal);
-
-	HashMap<String, LocalVector<Variant>> settings_opengl = {
-		{ "rendering/renderer/rendering_method", { "gl_compatibility" } },
-		{ "rendering/renderer/rendering_method.mobile", { "gl_compatibility" } },
-		{ "rendering/renderer/rendering_method.web", { "gl_compatibility" } },
-		{ "rendering/rendering_device/fallback_to_opengl3", { true } },
-	};
-	build_option_settings.insert(BUILD_OPTION_OPENGL, settings_opengl);
-
-	HashMap<String, LocalVector<Variant>> settings_phy_godot_3d = {
-		{ "physics/3d/physics_engine", { "DEFAULT", "GodotPhysics3D" } },
-	};
-	build_option_settings.insert(BUILD_OPTION_PHYSICS_GODOT_3D, settings_phy_godot_3d);
-
-	HashMap<String, LocalVector<Variant>> settings_jolt = {
-		{ "physics/3d/physics_engine", { "Jolt Physics" } },
-	};
-	build_option_settings.insert(BUILD_OPTION_PHYSICS_JOLT, settings_jolt);
-
-	HashMap<String, LocalVector<Variant>> settings_msdfgen = {
-		{ "gui/theme/default_font_multichannel_signed_distance_field", { true } },
-	};
-	build_option_settings.insert(BUILD_OPTION_MSDFGEN, settings_msdfgen);
-}
-
-//////////////////////////
-
-void EditorBuildProfileManager::_notification(int p_what) {
-	switch (p_what) {
-		case NOTIFICATION_READY: {
-			String last_file = EditorSettings::get_singleton()->get_project_metadata("build_profile", "last_file_path", "");
-			if (!last_file.is_empty() && !_import_profile(last_file)) {
-				// Keep the profile path if it fails, in case the user recovers or recreates it.
-				_set_profile_path(last_file);
-			}
-
-			if (edited.is_null()) {
-				edited.instantiate();
-				_update_edited_profile();
-			}
-		} break;
-
-		case NOTIFICATION_TRANSLATION_CHANGED: {
-			// Update `EditorHelpBit` in case it contains custom text.
-			_class_list_item_selected();
-		} break;
-	}
-}
-
-void EditorBuildProfileManager::_profile_action(int p_action) {
-	last_action = Action(p_action);
-
-	switch (p_action) {
-		case ACTION_RESET: {
-			confirm_dialog->set_text(TTRC("Reset the edited profile?"));
-			confirm_dialog->popup_centered();
-		} break;
-
-		case ACTION_LOAD: {
-			import_profile->popup_file_dialog();
-		} break;
-
-		case ACTION_SAVE: {
-			if (!profile_path.is_empty() && FileAccess::exists(profile_path)) {
-				Error err = edited->save_to_file(profile_path);
-				if (err != OK) {
-					EditorNode::get_singleton()->show_warning(TTRC("File saving failed."));
-				}
-				break;
-			}
-			[[fallthrough]];
-		}
-		case ACTION_SAVE_AS: {
-			export_profile->popup_file_dialog();
-			export_profile->set_current_file(profile_path);
-		} break;
-
-		case ACTION_NEW: {
-			confirm_dialog->set_text(TTRC("Unset the current profile?"));
-			confirm_dialog->popup_centered();
-		} break;
-
-		case ACTION_DETECT: {
-			String text = TTR("This will scan all files in the current project to detect used classes.\nNote that the first scan may take a while, specially in larger projects.");
-#ifdef MODULE_MONO_ENABLED
-			text += "\n\n" + TTR("Warning: Class detection for C# scripts is not currently available, and such files will be ignored.");
-#endif // MODULE_MONO_ENABLED
-			confirm_dialog->set_text(text);
-			confirm_dialog->popup_centered();
-		} break;
-
-		case ACTION_CLEAR_CACHE: {
-			confirm_dialog->set_text(TTRC("Clear cache of used classes per file? This will make it so that those files will need to be re-scanned, but it can also help fix problems related to outdated caching."));
-			confirm_dialog->popup_centered();
-		} break;
-
-		case ACTION_MAX: {
-		} break;
-	}
-}
-
-void EditorBuildProfileManager::_find_files(EditorFileSystemDirectory *p_dir, const HashMap<String, DetectedFile> &p_cache, HashMap<String, DetectedFile> &r_detected) {
-	if (p_dir == nullptr || p_dir->get_path().get_file().begins_with(".")) {
-		return;
-	}
-
-	for (int i = 0; i < p_dir->get_file_count(); i++) {
-		String p = p_dir->get_file_path(i);
-
-		if (EditorNode::get_singleton()->progress_task_step("detect_classes_from_project", p, 1)) {
-			project_scan_canceled = true;
-			return;
-		}
-
-		String p_check = p;
-		// Make so that the import file is the one checked if available,
-		// so the cache can be updated when it changes.
-		if (ResourceFormatImporter::get_singleton()->exists(p_check)) {
-			p_check += ".import";
-		}
-
-		uint64_t timestamp = 0;
-		String md5;
-
-		if (p_cache.has(p)) {
-			const DetectedFile &cache = p_cache[p];
-			// Check if timestamp and MD5 match.
-			timestamp = FileAccess::get_modified_time(p_check);
-			bool cache_valid = true;
-			if (cache.timestamp != timestamp) {
-				md5 = FileAccess::get_md5(p_check);
-				if (md5 != cache.md5) {
-					cache_valid = false;
-				}
-			}
-
-			if (cache_valid) {
-				r_detected.insert(p, cache);
-				continue;
-			}
-		}
-
-		// Not cached, or cache invalid.
-
-		DetectedFile cache;
-
-		HashSet<StringName> classes;
-		ResourceLoader::get_classes_used(p, &classes);
-		for (const StringName &E : classes) {
-			cache.classes.push_back(E);
-		}
-
-		HashSet<String> build_deps;
-		ResourceFormatImporter::get_singleton()->get_build_dependencies(p, &build_deps);
-		for (const String &E : build_deps) {
-			cache.build_deps.push_back(E);
-		}
-
-		if (md5.is_empty()) {
-			cache.timestamp = FileAccess::get_modified_time(p_check);
-			cache.md5 = FileAccess::get_md5(p_check);
-		} else {
-			cache.timestamp = timestamp;
-			cache.md5 = md5;
-		}
-
-		r_detected.insert(p, cache);
-	}
-
-	for (int i = 0; i < p_dir->get_subdir_count(); i++) {
-		_find_files(p_dir->get_subdir(i), p_cache, r_detected);
-	}
-}
-
-void EditorBuildProfileManager::_detect_from_project() {
-	EditorNode::get_singleton()->progress_add_task("detect_classes_from_project", TTRC("Scanning Project for Used Classes"), 3, true);
-
-	String cache_path = EditorPaths::get_singleton()->get_project_settings_dir().path_join("used_class_cache");
-
-	HashMap<String, DetectedFile> previous_file_cache;
-
-	Ref<FileAccess> f = FileAccess::open(cache_path, FileAccess::READ);
-	if (f.is_valid()) {
-		while (!f->eof_reached()) {
-			String l = f->get_line();
-			Vector<String> fields = l.split("::");
-			if (fields.size() == 5) {
-				const String &path = fields[0];
-				DetectedFile df;
-				df.timestamp = fields[1].to_int();
-				df.md5 = fields[2];
-				df.classes = fields[3].split(",", false);
-				df.build_deps = fields[4].split(",", false);
-				previous_file_cache.insert(path, df);
-			}
-		}
-		f.unref();
-	}
-
-	HashMap<String, DetectedFile> updated_file_cache;
-
-	_find_files(EditorFileSystem::get_singleton()->get_filesystem(), previous_file_cache, updated_file_cache);
-
-	if (project_scan_canceled) {
-		project_scan_canceled = false;
-		EditorNode::get_singleton()->progress_end_task("detect_classes_from_project");
-
-		return;
-	}
-
-	EditorNode::get_singleton()->progress_task_step("detect_classes_from_project", TTRC("Processing Classes Found"), 2);
-
-	HashSet<StringName> used_classes;
-	LocalVector<String> used_build_deps;
-
-	// Find classes and update the disk cache in the process.
-	f = FileAccess::open(cache_path, FileAccess::WRITE);
-	if (f.is_valid()) {
-		for (const KeyValue<String, DetectedFile> &E : updated_file_cache) {
-			String l = E.key + "::" + itos(E.value.timestamp) + "::" + E.value.md5 + "::";
-			for (int i = 0; i < E.value.classes.size(); i++) {
-				String c = E.value.classes[i];
-				if (i > 0) {
-					l += ",";
-				}
-				l += c;
-				used_classes.insert(c);
-			}
-			l += "::";
-			for (int i = 0; i < E.value.build_deps.size(); i++) {
-				String c = E.value.build_deps[i];
-				if (i > 0) {
-					l += ",";
-				}
-				l += c;
-				used_build_deps.push_back(c);
-			}
-			f->store_line(l);
-		}
-		f.unref();
-
-		profile_actions[ACTION_CLEAR_CACHE]->set_disabled(false);
-	}
-
-	// Add classes that are either necessary for the engine to work properly, or there isn't a way to infer their use.
-
-	// HACK: Some classes are included due to creating clashes with unrelated when disabled.
-	// Until that is fixed, they need to always be enabled.
-	const LocalVector<String> hardcoded_classes = {
-		"Font",
-		"InputEvent",
-		"ShaderInclude",
-		"StyleBox",
-		"Window",
-	};
 
 	for (const String &hc_class : hardcoded_classes) {
 		used_classes.insert(hc_class);

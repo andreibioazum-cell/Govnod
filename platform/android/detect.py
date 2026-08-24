@@ -263,7 +263,3 @@ def configure(env: "SConsEnvironment"):
             env.Append(LIBS=["swappy_static"])
         if not env["use_volk"]:
             env.Append(LIBS=["vulkan"])
-
-    if env["opengl3"]:
-        env.Append(CPPDEFINES=["GLES3_ENABLED"])
-        env.Append(LIBS=["GLESv3"])

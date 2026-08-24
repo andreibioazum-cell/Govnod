@@ -3234,11 +3234,11 @@ void Node3DEditorViewport::_notification(int p_what) {
 					case SupportedRenderingMethods::ALL:
 						break;
 					case SupportedRenderingMethods::FORWARD_PLUS_MOBILE:
-						disabled = OS::get_singleton()->get_current_rendering_method() == "gl_compatibility";
+						disabled = false;
 						disabled_tooltip = TTR("This debug draw mode is only supported when using the Forward+ or Mobile renderer.");
 						break;
 					case SupportedRenderingMethods::FORWARD_PLUS:
-						disabled = OS::get_singleton()->get_current_rendering_method() == "gl_compatibility" || OS::get_singleton()->get_current_rendering_method() == "mobile";
+						disabled = false || OS::get_singleton()->get_current_rendering_method() == "mobile";
 						disabled_tooltip = TTR("This debug draw mode is only supported when using the Forward+ renderer.");
 						break;
 				}

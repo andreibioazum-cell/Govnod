@@ -30,7 +30,6 @@
 
 package org.godotengine.godot;
 
-import org.godotengine.godot.gl.GodotRenderer;
 import org.godotengine.godot.io.directory.DirectoryAccessHandler;
 import org.godotengine.godot.io.file.FileAccessHandler;
 import org.godotengine.godot.nativeapi.GodotNativeBridge;
@@ -82,7 +81,7 @@ public class GodotLib {
 	 * @param p_surface
 	 * @param p_width
 	 * @param p_height
-	 * @see org.godotengine.godot.gl.GLSurfaceView.Renderer#onSurfaceChanged(GL10, int, int)
+	 * Invoked when the surface dimensions change.
 	 */
 	public static native void resize(Surface p_surface, int p_width, int p_height);
 
@@ -99,7 +98,7 @@ public class GodotLib {
 
 	/**
 	 * Invoked on the GL thread to draw the current frame.
-	 * @see org.godotengine.godot.gl.GLSurfaceView.Renderer#onDrawFrame(GL10)
+	 * Invoked to draw the frame.
 	 */
 	public static native boolean step();
 
@@ -286,18 +285,6 @@ public class GodotLib {
 	 * Invoked on the GL thread to configure the height of the virtual keyboard.
 	 */
 	public static native void setVirtualKeyboardHeight(int p_height);
-
-	/**
-	 * Invoked on the GL thread when the {@link GodotRenderer} has been resumed.
-	 * @see GodotRenderer#onActivityResumed()
-	 */
-	public static native void onRendererResumed();
-
-	/**
-	 * Invoked on the GL thread when the {@link GodotRenderer} has been paused.
-	 * @see GodotRenderer#onActivityPaused()
-	 */
-	public static native void onRendererPaused();
 
 	/**
 	 * Invoked when the screen orientation changes.

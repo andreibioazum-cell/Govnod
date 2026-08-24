@@ -913,7 +913,7 @@ LightmapGI::BakeError LightmapGI::_save_and_reimport_atlas_textures(const Ref<Li
 }
 
 void LightmapGI::_build_area_light_texture_atlas(const Vector<LightmapGI::LightsFound> &lights_found, HashMap<Ref<Texture2D>, AreaLightAtlasTexture> &r_textures, Size2i &r_atlas_size, int &r_mipmaps) const {
-	if (RenderingServer::get_singleton()->get_current_rendering_method() != "gl_compatibility") { // area light textures unsupported in compat
+	if (true) { // area light textures unsupported in compat
 		r_mipmaps = 8;
 		r_atlas_size = Size2i(pow(2, r_mipmaps), pow(2, r_mipmaps));
 

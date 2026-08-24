@@ -44,7 +44,6 @@ def _helper_module(name, path):
         setattr(parent_module, child_name, child_module)
 
 
-_helper_module("gles3_builders", "gles3_builders.py")
 _helper_module("glsl_builders", "glsl_builders.py")
 _helper_module("methods", "methods.py")
 _helper_module("platform_methods", "platform_methods.py")
@@ -54,7 +53,6 @@ _helper_module("main.main_builders", "main/main_builders.py")
 _helper_module("misc.utility.color", "misc/utility/color.py")
 
 # Local
-import gles3_builders
 import glsl_builders
 import methods
 import scu_builders
@@ -193,15 +191,8 @@ opts.Add(
 )
 opts.Add(BoolVariable("minizip", "Enable ZIP archive support using minizip", True))
 opts.Add(BoolVariable("brotli", "Enable Brotli for decompression and WOFF2 fonts support", True))
-opts.Add(BoolVariable("xaudio2", "Enable the XAudio2 audio driver on supported platforms", False))
 opts.Add(BoolVariable("vulkan", "Enable the Vulkan rendering driver", True))
-opts.Add(BoolVariable("opengl3", "Enable the OpenGL/GLES3 rendering driver", True))
-opts.Add(BoolVariable("d3d12", "Enable the Direct3D 12 rendering driver on supported platforms", False))
-opts.Add(BoolVariable("metal", "Enable the Metal rendering driver on supported platforms (Apple arm64 only)", False))
 opts.Add(BoolVariable("use_volk", "Use the volk library to load the Vulkan loader dynamically", True))
-opts.Add(BoolVariable("accesskit", "Enable the AccessKit driver for screen reader support", True))
-opts.Add(BoolVariable("angle", "Enable the ANGLE rendering driver for OpenGL ES 3.0 on supported platforms", True))
-opts.Add(BoolVariable("sdl", "Enable the SDL3 input driver", True))
 opts.Add(
     EnumVariable(
         "profiler", "Specify the profiler to use", "none", ["none", "tracy", "perfetto", "instruments"], ignorecase=2
@@ -381,22 +372,9 @@ if env["import_env_vars"]:
 # Platform selection: validate input, and add options.
 
 if not env["platform"]:
-    # Missing `platform` argument, try to detect platform automatically
-    if (
-        sys.platform.startswith("linux")
-        or sys.platform.startswith("dragonfly")
-        or sys.platform.startswith("freebsd")
-        or sys.platform.startswith("netbsd")
-        or sys.platform.startswith("openbsd")
-    ):
-        env["platform"] = "linuxbsd"
-    elif sys.platform == "darwin":
-        env["platform"] = "macos"
-    elif sys.platform == "win32":
-        env["platform"] = "windows"
-
-    if env["platform"]:
-        print(f"Automatically detected platform: {env['platform']}")
+    # Android is the only supported platform.
+    env["platform"] = "android"
+    print("Only Android is supported, defaulting platform to 'android'.")
 
 # Deprecated aliases kept for compatibility.
 if env["platform"] in compatibility_platform_aliases:
@@ -406,11 +384,6 @@ if env["platform"] in compatibility_platform_aliases:
         f'Platform "{alias}" has been renamed to "{platform}" in Godot 4. Building for platform "{platform}".'
     )
     env["platform"] = platform
-
-# Alias for convenience.
-if env["platform"] in ["linux", "bsd"]:
-    env["platform"] = "linuxbsd"
-
 if env["platform"] not in platform_list:
     text = "The following platforms are available:\n\t{}\n".format("\n\t".join(platform_list))
     text += "Please run SCons again and select a valid platform: platform=<string>."
@@ -1158,11 +1131,6 @@ GLSL_BUILDERS = {
     ),
     "GLSL_HEADER": env.Builder(
         action=env.Run(glsl_builders.build_raw_headers),
-        suffix="glsl.gen.h",
-        src_suffix=".glsl",
-    ),
-    "GLES3_GLSL": env.Builder(
-        action=env.Run(gles3_builders.build_gles3_headers),
         suffix="glsl.gen.h",
         src_suffix=".glsl",
     ),

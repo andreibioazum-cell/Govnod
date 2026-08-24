@@ -270,10 +270,6 @@ String bool_to_string(bool v) {
 	return v ? "true" : "false";
 }
 
-String _get_gles_tag() {
-	return "    <uses-feature android:glEsVersion=\"0x00030000\" android:required=\"true\" />\n";
-}
-
 String _get_screen_sizes_tag(const Ref<EditorExportPreset> &p_preset) {
 	String manifest_screen_sizes = "    <supports-screens \n        tools:node=\"replace\"";
 	String sizes[] = { "small", "normal", "large", "xlarge" };

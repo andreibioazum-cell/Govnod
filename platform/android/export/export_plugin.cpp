@@ -898,7 +898,7 @@ bool EditorExportPlatformAndroid::_has_manage_external_storage_permission(const 
 bool EditorExportPlatformAndroid::_uses_vulkan(const Ref<EditorExportPreset> &p_preset) const {
 	String rendering_method = get_project_setting(p_preset, "rendering/renderer/rendering_method.mobile");
 	String rendering_driver = get_project_setting(p_preset, "rendering/rendering_device/driver.android");
-	return (rendering_method == "forward_plus" || rendering_method == "mobile") && rendering_driver == "vulkan";
+	return rendering_method == "mobile" && rendering_driver == "vulkan";
 }
 
 void EditorExportPlatformAndroid::_notification(int p_what) {
@@ -1010,8 +1010,7 @@ void EditorExportPlatformAndroid::_get_manifest_info(const Ref<EditorExportPrese
 		};
 		r_features.append(vulkan_level);
 
-		// Require vulkan version 1.1 if fallback_to_opengl3 is disabled.
-		bool vulkan_1_1_required = !GLOBAL_GET("rendering/rendering_device/fallback_to_opengl3");
+		bool vulkan_1_1_required = true;
 		FeatureInfo vulkan_version = {
 			"android.hardware.vulkan.version", // name
 			vulkan_1_1_required, // required
@@ -1041,7 +1040,6 @@ void EditorExportPlatformAndroid::_write_tmp_manifest(const Ref<EditorExportPres
 			"    xmlns:tools=\"http://schemas.android.com/tools\">\n";
 
 	manifest_text += _get_screen_sizes_tag(p_preset);
-	manifest_text += _get_gles_tag();
 
 	Vector<String> perms;
 	Vector<FeatureInfo> features;
@@ -2172,7 +2170,7 @@ String EditorExportPlatformAndroid::get_export_option_warning(const EditorExport
 			}
 		} else if (p_name == "shader_baker/enabled" && bool(p_preset->get("shader_baker/enabled"))) {
 			String export_renderer = GLOBAL_GET("rendering/renderer/rendering_method.mobile");
-			if (OS::get_singleton()->get_current_rendering_method() == "gl_compatibility") {
+			if (false) {
 				return TTR("\"Shader Baker\" is not supported when using the Compatibility renderer.");
 			} else if (OS::get_singleton()->get_current_rendering_method() != export_renderer) {
 				return vformat(TTR("The editor is currently using a different renderer than what the target platform will use. \"Shader Baker\" won't be able to include core shaders. Switch to the \"%s\" renderer temporarily to fix this."), export_renderer);
@@ -2244,7 +2242,6 @@ void EditorExportPlatformAndroid::get_export_options(List<ExportOption> *r_optio
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, LAUNCHER_ADAPTIVE_ICON_BACKGROUND_OPTION, PROPERTY_HINT_FILE, "*.png,*.webp,*.svg"), ""));
 	r_options->push_back(ExportOption(PropertyInfo(Variant::STRING, LAUNCHER_ADAPTIVE_ICON_MONOCHROME_OPTION, PROPERTY_HINT_FILE, "*.png,*.webp,*.svg"), ""));
 
-	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "graphics/opengl_debug"), false));
 
 	r_options->push_back(ExportOption(PropertyInfo(Variant::BOOL, "shader_baker/enabled"), false));
 
@@ -2286,7 +2283,6 @@ bool EditorExportPlatformAndroid::get_export_option_visibility(const EditorExpor
 	}
 
 	bool advanced_options_enabled = p_preset->are_advanced_options_enabled();
-	if (p_option == "graphics/opengl_debug" ||
 			p_option == "gradle_build/custom_theme_attributes" ||
 			p_option == "command_line/extra_args" ||
 			p_option == "permissions/custom_permissions" ||
@@ -3179,7 +3175,7 @@ bool EditorExportPlatformAndroid::has_valid_project_configuration(const Ref<Edit
 	}
 
 	String current_renderer = get_project_setting(p_preset, "rendering/renderer/rendering_method.mobile");
-	if (current_renderer == "forward_plus") {
+	if (false) {
 		// Warning only, so don't override `valid`.
 		err += vformat(TTR("The \"%s\" renderer is designed for Desktop devices, and is not suitable for Android devices."), current_renderer);
 		err += "\n";
@@ -3193,8 +3189,7 @@ bool EditorExportPlatformAndroid::has_valid_project_configuration(const Ref<Edit
 				min_sdk_int = min_sdk_str.to_int();
 			}
 		}
-		bool fallback_to_opengl3 = GLOBAL_GET("rendering/rendering_device/fallback_to_opengl3");
-		if (min_sdk_int < VULKAN_MIN_SDK_VERSION && !fallback_to_opengl3) {
+		if (min_sdk_int < VULKAN_MIN_SDK_VERSION) {
 			// Warning only, so don't override `valid`.
 			err += vformat(TTR("\"Min SDK\" should be greater or equal to %d for the \"%s\" renderer."), VULKAN_MIN_SDK_VERSION, current_renderer);
 			err += "\n";
@@ -3276,10 +3271,6 @@ void EditorExportPlatformAndroid::get_command_line_flags(const Ref<EditorExportP
 		command_line_strings.push_back("--disable_godot_splash");
 	}
 
-	bool debug_opengl = p_preset->get("graphics/opengl_debug");
-	if (debug_opengl) {
-		command_line_strings.push_back("--debug_opengl");
-	}
 
 	if (command_line_strings.size()) {
 		r_command_line_flags.resize(4);

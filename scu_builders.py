@@ -412,7 +412,6 @@ def generate_scu_files(max_includes_per_scu):
     process_folder(["servers/rendering/renderer_rd/effects"])
     process_folder(["servers/rendering/renderer_rd/environment"])
     process_folder(["servers/rendering/renderer_rd/storage_rd"])
-    process_folder(["servers/rendering/renderer_rd/forward_clustered"])
     process_folder(["servers/rendering/renderer_rd/forward_mobile"])
     process_folder(["servers/xr"])
 

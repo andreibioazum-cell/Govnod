@@ -46,10 +46,6 @@ private:
 
 	bool use_apk_expansion;
 
-#if defined(GLES3_ENABLED)
-	const char *gl_extensions;
-#endif
-
 #if defined(VULKAN_ENABLED)
 	ANativeWindow *native_window = nullptr;
 #endif
@@ -133,7 +129,6 @@ public:
 	void set_display_size(const Size2i &p_size);
 	Size2i get_display_size() const;
 
-	void set_opengl_extensions(const char *p_gl_extensions);
 
 	void set_native_window(ANativeWindow *p_native_window);
 	ANativeWindow *get_native_window() const;
