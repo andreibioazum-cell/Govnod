@@ -1,23 +1,45 @@
-# Govnod
+# Govnod Cube
 
-Mobile-only fork of the Godot Engine, stripped down for Android development.
+The Govnod fork, taken to its logical conclusion: the engine is gone.
 
-## What's different from upstream Godot
+What remains is a single C++ file (`native/gmcube.cpp`) that renders a
+spinning 3D cube on Android using Vulkan — no engine, no Gradle, no
+dependencies beyond the NDK and the Vulkan headers.
 
-- **Android only** — all other platforms (Windows, Linux, macOS, iOS, Web, visionOS) removed.
-- **Mobile renderer only** — Forward+ and Compatibility (GLES3/OpenGL) renderers removed, Vulkan driver only.
-- **English + Russian UI** — all other editor translations removed.
-- **No donate / about screens** — the Donate button, "Support Godot Development" item, About/Credits windows and author/donor lists removed.
-- Lots of unused platform code, drivers, modules and CI removed.
+- **Android only, arm64** — `minSdk 24`
+- **Vulkan only** — `NativeActivity` + `VK_KHR_android_surface`
+- **No Java code** — `android:hasCode="false"`, the APK is a manifest plus one `.so`
+- Back button exits the app
 
-## Building (Android)
+## Build
 
-Requires Android SDK + NDK (see `platform/android/README.md`).
+CI builds it on every push (see `.github/workflows/main.yml`).
+Locally, with the Android SDK + NDK installed:
 
+```sh
+ANDROID_HOME=$HOME/Android/Sdk bash scripts/build_apk.sh
+# -> bin/govnod-cube-debug.apk
 ```
-scons platform=android target=template_release arch=arm64
-```
 
-The editor can also be built for Android with `target=editor`.
+The build compiles `native/gmcube.cpp` and the NDK's `native_app_glue`
+with the NDK clang, then packages and signs the APK with `aapt2`,
+`zipalign` and `apksigner` — no Gradle involved.
 
-Based on Godot Engine (https://godotengine.org), MIT license — see [LICENSE.txt](LICENSE.txt) and [COPYRIGHT.txt](COPYRIGHT.txt) for third-party licenses.
+## Shaders
+
+`native/shaders/cube.vert` and `cube.frag` are compiled to SPIR-V with
+`glslang`; the result is checked in as `native/shaders/shaders.h`.
+
+## History
+
+This repository used to be a mobile-only fork of the Godot Engine
+(MIT license, https://godotengine.org). Then the engine was removed.
+The vendored Vulkan headers in `thirdparty/vulkan/` remain from that era.
+
+---
+
+## По-русски
+
+Движок убран. Остался один файл `native/gmcube.cpp`, который рисует
+вращающийся 3D-куб на Vulkan. Никакого движка, никакого Gradle — только
+NDK и Vulkan. CI на каждый пуш собирает `bin/govnod-cube-debug.apk`.

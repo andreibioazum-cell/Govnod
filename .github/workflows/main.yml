@@ -1,156 +1,55 @@
-name: Android arm64 Debug APK
+name: Android Cube APK
 
 "on":
   push:
     paths-ignore:
-      - "doc/**"
       - "**.md"
       - "LICENSE.txt"
-      - "COPYRIGHT.txt"
   pull_request:
     paths-ignore:
-      - "doc/**"
       - "**.md"
       - "LICENSE.txt"
-      - "COPYRIGHT.txt"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: android-arm64-${{ github.ref }}
+  group: cube-apk-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  SCONS_FLAGS: >-
-    dev_mode=yes
-    disable_3d=yes
-    disable_physics_2d=yes
-    disable_physics_3d=yes
-    disable_navigation_2d=yes
-    disable_navigation_3d=yes
-    disable_advanced_gui=yes
-    disable_xr=yes
-    module_text_server_fb_enabled=yes
-    module_lightmapper_rd_enabled=no
-    module_noise_enabled=no
-    module_gridmap_enabled=no
-    module_csg_enabled=no
-    module_navigation_enabled=no
-    module_multiplayer_enabled=no
-    module_webrtc_enabled=no
-    module_websocket_enabled=no
-    module_camera_enabled=no
-    module_mobile_vr_enabled=no
-    module_raycast_enabled=no
-    module_vorbis_enabled=no
-    module_theora_enabled=no
-    module_minimp3_enabled=no
-    module_zip_enabled=no
-    module_squish_enabled=no
-    module_basis_universal_enabled=no
-    module_gltf_enabled=no
-    module_jolt_physics_enabled=no
-    linker=mold
-    debug_symbols=no
-    cache_path=${{ github.workspace }}/.scons-cache
-    cache_limit=3
-
 jobs:
-  compile-arm64:
+  build:
     runs-on: ubuntu-24.04
-    name: Compile arm64 debug
-    timeout-minutes: 12
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Install build tools
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq mold ccache
-          echo "/usr/lib/ccache" >> "$GITHUB_PATH"
-
-      - name: Restore compiler caches
-        uses: actions/cache@v4
-        with:
-          path: |
-            .ccache
-            .scons-cache
-          key: android-arm64-${{ hashFiles('SConstruct', '**/SCsub', '**/*.py', 'platform/android/**') }}
-          restore-keys: |
-            android-arm64-
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-          cache: pip
-
-      - name: Install SCons
-        run: pip install --disable-pip-version-check scons==4.10.1
-
-      - name: Install Android dependencies
-        run: |
-          python misc/scripts/install_perfetto.py
-          python misc/scripts/install_swappy_android.py
-
-      - name: Configure ccache
-        run: |
-          ccache --set-config=cache_dir="${{ github.workspace }}/.ccache"
-          ccache --set-config=max_size=2G
-          ccache --set-config=compression=true
-          ccache --set-config=sloppiness=time_macros,file_stat_matches
-
-      - name: Compile arm64 debug
-        run: |
-          scons platform=android target=template_debug arch=arm64 ${{ env.SCONS_FLAGS }}
-
-      - name: Upload arm64 template
-        uses: actions/upload-artifact@v4
-        with:
-          name: template-arm64
-          path: bin/libgodot.android.template_debug.arm64.so
-          retention-days: 1
-          if-no-files-found: error
-
-  assemble-apk:
-    needs: compile-arm64
-    runs-on: ubuntu-24.04
-    name: Assemble arm64 APK
+    name: Build arm64 APK
     timeout-minutes: 10
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
-          cache: gradle
 
-      - name: Download arm64 template
-        uses: actions/download-artifact@v4
-        with:
-          name: template-arm64
-          path: bin/
+      - name: Build APK
+        run: |
+          set -o pipefail
+          bash scripts/build_apk.sh 2>&1 | tee build.log
 
-      - name: Generate APK
-        working-directory: platform/android/java
-        run: ./gradlew generateGodotTemplates --no-daemon --parallel --build-cache
+      - name: Surface build errors
+        if: failure()
+        run: |
+          grep -E "error:|ERROR:|Error " build.log | tail -20 | while IFS= read -r line; do
+            echo "::error::$(echo "$line" | cut -c1-220)"
+          done || true
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: android-arm64-debug-apk
-          path: bin/android_debug.apk
+          name: govnod-cube-arm64-debug-apk
+          path: bin/govnod-cube-debug.apk
           retention-days: 30
           if-no-files-found: error
