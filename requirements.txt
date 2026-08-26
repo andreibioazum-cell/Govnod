@@ -1,0 +1,2 @@
+# Only dependency left: the build entry point shim runs via scons.
+scons==4.10.1
