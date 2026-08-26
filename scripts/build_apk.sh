@@ -47,6 +47,7 @@ mkdir -p bin/obj
 "$TOOLCHAIN/clang++" --target="$TRIPLE$API" -O2 -std=gnu++17 -Wall -Wextra -Werror \
     -fPIC -funwind-tables -fstack-protector-strong \
     -DVK_USE_PLATFORM_ANDROID_KHR \
+    -I"$NDK_DIR/sources/android/native_app_glue" \
     -Ithirdparty/vulkan/include -Inative -Inative/shaders \
     -c native/gmcube.cpp -o bin/obj/gmcube.o
 
