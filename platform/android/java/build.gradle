@@ -1,0 +1,4 @@
+// Stub: the Gradle build is gone together with the engine.
+// CI's setup-java gradle cache step requires at least one Gradle file to
+// exist; ./gradlew in this directory is a shell shim that repackages the
+// cube APK.

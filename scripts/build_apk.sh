@@ -8,8 +8,10 @@ set -euo pipefail
 # error is visible from the job summary without opening the full log.
 exec > >(tee build.log) 2>&1
 on_error() {
-    tail -40 build.log 2>/dev/null | grep -Ei "error|fail|not found|No such" | tail -8 | while IFS= read -r line; do
-        echo "::error::$(echo "$line" | cut -c1-220)"
+    tail -15 build.log 2>/dev/null | while IFS= read -r line; do
+        if [ -n "$line" ]; then
+            echo "::error::$(echo "$line" | cut -c1-220)"
+        fi
     done
     echo "::error::scripts/build_apk.sh failed — see the job log for the full trace"
 }
