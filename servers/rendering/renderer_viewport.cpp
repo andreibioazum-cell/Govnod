@@ -1022,23 +1022,18 @@ void RendererViewport::viewport_set_use_xr(RID p_viewport, bool p_use_xr) {
 void RendererViewport::viewport_set_scaling_3d_mode(RID p_viewport, RSE::ViewportScaling3DMode p_mode) {
 	Viewport *viewport = viewport_owner.get_or_null(p_viewport);
 	ERR_FAIL_NULL(viewport);
-	const String rendering_method = OS::get_singleton()->get_current_rendering_method();
-	if (true) {
-		if (p_mode == RSE::VIEWPORT_SCALING_3D_MODE_FSR) {
-			WARN_PRINT_ONCE_ED("FSR1 3D scaling is only available when using the Forward+ renderer.");
-			return;
-		}
-		if (p_mode == RSE::VIEWPORT_SCALING_3D_MODE_FSR2) {
-			WARN_PRINT_ONCE_ED("FSR2 3D scaling is only available when using the Forward+ renderer.");
-			return;
-		}
-		if (p_mode == RSE::VIEWPORT_SCALING_3D_MODE_METALFX_TEMPORAL) {
-			WARN_PRINT_ONCE_ED("MetalFX Temporal 3D scaling is only available when using the Forward+ renderer.");
-			return;
-		}
+
+	// Mobile renderer only: FSR and MetalFX upscalers are Forward+-only.
+	if (p_mode == RSE::VIEWPORT_SCALING_3D_MODE_FSR) {
+		WARN_PRINT_ONCE_ED("FSR1 3D scaling is only available when using the Forward+ renderer.");
+		return;
 	}
-	if (false) {
-		WARN_PRINT_ONCE_ED("MetalFX Spatial 3D scaling is only available when using the Forward+ or Mobile renderer.");
+	if (p_mode == RSE::VIEWPORT_SCALING_3D_MODE_FSR2) {
+		WARN_PRINT_ONCE_ED("FSR2 3D scaling is only available when using the Forward+ renderer.");
+		return;
+	}
+	if (p_mode == RSE::VIEWPORT_SCALING_3D_MODE_METALFX_TEMPORAL) {
+		WARN_PRINT_ONCE_ED("MetalFX Temporal 3D scaling is only available when using the Forward+ renderer.");
 		return;
 	}
 
