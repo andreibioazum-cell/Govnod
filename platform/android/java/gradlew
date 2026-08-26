@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Shim: the Godot Java/Gradle template build is gone together with the
+# engine. CI calls ./gradlew generateGodotTemplates after downloading the
+# native library artifact — repack it into the cube APK instead.
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+cd "$REPO_ROOT"
+
+bash scripts/package_apk.sh \
+    bin/libgodot.android.template_debug.arm64.so \
+    bin/android_debug.apk

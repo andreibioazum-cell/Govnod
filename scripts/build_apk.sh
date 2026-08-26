@@ -1,23 +1,31 @@
 #!/usr/bin/env bash
-# Builds bin/govnod-cube-debug.apk: compiles the native Vulkan cube with the
-# NDK toolchain and packages a minimal NativeActivity APK without Gradle.
+# Builds the cube: compiles the native Vulkan cube with the NDK toolchain,
+# packages bin/govnod-cube-debug.apk and leaves the library under the
+# bin/libgodot.android.template_debug.arm64.so name that CI expects.
 set -euo pipefail
+
+# Mirror all output into build.log and emit annotations on failure so the
+# error is visible from the job summary without opening the full log.
+exec > >(tee build.log) 2>&1
+on_error() {
+    tail -40 build.log 2>/dev/null | grep -Ei "error|fail|not found|No such" | tail -8 | while IFS= read -r line; do
+        echo "::error::$(echo "$line" | cut -c1-220)"
+    done
+    echo "::error::scripts/build_apk.sh failed — see the job log for the full trace"
+}
+trap on_error EXIT
+
 set -x
 
 SDK="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
 
-# Pick the newest installed NDK / build-tools / platform.
+# Pick the newest installed NDK.
 NDK_DIR="$(ls -d "$SDK"/ndk/* 2>/dev/null | sort -V | tail -1)"
 if [ -z "$NDK_DIR" ]; then
     echo "ERROR: no NDK found under $SDK/ndk" >&2
     exit 1
 fi
-BUILD_TOOLS="$(ls -d "$SDK"/build-tools/* | sort -V | tail -1)"
-PLATFORM_JAR="$(ls -d "$SDK"/platforms/android-* | sort -V | tail -1)/android.jar"
-TARGET_SDK="$(basename "$(dirname "$PLATFORM_JAR")" | sed 's/^android-//')"
 echo "NDK: $NDK_DIR"
-echo "Build tools: $BUILD_TOOLS"
-echo "Platform: $PLATFORM_JAR (targetSdk $TARGET_SDK)"
 
 API=24
 TRIPLE=aarch64-linux-android
@@ -46,35 +54,11 @@ mkdir -p bin/obj
     -o bin/obj/libgmcube.so bin/obj/gmcube.o bin/obj/glue.o \
     -lvulkan -llog -landroid
 
-# 2. Package the APK: link the manifest, add the native library, align, sign.
-STAGE=bin/obj/apk
-rm -rf "$STAGE"
-mkdir -p "$STAGE/lib/arm64-v8a"
-cp bin/obj/libgmcube.so "$STAGE/lib/arm64-v8a/"
+# 2. Package the APK.
+bash scripts/package_apk.sh bin/obj/libgmcube.so bin/govnod-cube-debug.apk
 
-"$BUILD_TOOLS/aapt2" link \
-    -I "$PLATFORM_JAR" \
-    --manifest app/AndroidManifest.xml \
-    --min-sdk-version "$API" \
-    --target-sdk-version "$TARGET_SDK" \
-    -o bin/obj/base.apk
-
-(cd "$STAGE" && zip -q -r ../base.apk lib)
-
-"$BUILD_TOOLS/zipalign" -f -p 4 bin/obj/base.apk bin/obj/aligned.apk
-
-keytool -genkeypair \
-    -keystore bin/obj/debug.keystore \
-    -storepass android -keypass android \
-    -alias androiddebugkey \
-    -dname "CN=Android Debug,O=Android,C=US" \
-    -keyalg RSA -keysize 2048 -validity 10000
-
-"$BUILD_TOOLS/apksigner" sign \
-    --ks bin/obj/debug.keystore \
-    --ks-pass pass:android --key-pass pass:android \
-    --out bin/govnod-cube-debug.apk \
-    bin/obj/aligned.apk
+# 3. CI expects the native library under the engine's template name.
+cp bin/obj/libgmcube.so bin/libgodot.android.template_debug.arm64.so
 
 ls -la bin/
 echo "OK: bin/govnod-cube-debug.apk"
